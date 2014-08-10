@@ -1,33 +1,29 @@
 __author__ = 'JoeJoe'
 
+import zlib
+import time
+
 import proto.Block_pb2 as Block_pb2
 import proto.Map_pb2 as Map_pb2
-import proto.Material_pb2 as Material_pb2
-import proto.Plant_pb2 as Plant_pb2
-import proto.Tile_pb2 as Tile_pb2
 from Tile import Tile
-from Terrain import TileType
-from Terrain import Terrain
-import zlib
+from Terrain import TerrainType
 import bpy
 import bmesh
 from mathutils import Vector
-import sys
-import time
-import math
-from helpers import *
+from helpers import b2i, get_msg_length, get_length_length
 
 
-f = open('trainregion.dfmap', "rb")         # filename
-minX = 70                                   # min and max coordinates to build
-maxX = 90                                  # min is inclusive, max is exclusive
-minY = -1                                   # -1 for whole map
+# filename
+f = open('trainregion.dfmap', "rb")
+# min and max coordinates to build
+# min is inclusive, max is exclusive
+# -1 for whole map
+minX = 70
+maxX = 90
+minY = -1
 maxY = -1
 minZ = -1
 maxZ = -1
-
-
-
 
 start_time = time.time()
 raw_data = f.read()
@@ -42,9 +38,7 @@ else:
     print("header is wrong")
 
 pos = 4
-
 lengthLength = get_length_length(unzipped_data, pos)
-
 msglength = get_msg_length(unzipped_data[pos:pos+lengthLength])
 pos += lengthLength
 protomessage = unzipped_data[pos:pos + msglength]
@@ -57,10 +51,9 @@ print("build MATLIB")
 material_lib = [[] for x in range(2)]
 for m in mapData.inorganic_material:
     material_lib[0].append(m.name)
-
 for m in mapData.organic_material:
     material_lib[1].append(m.name)
-#print(str(mapData))
+
 #determine min and max stuff
 minX = max(1, minX)
 minY = max(1, minY)
@@ -79,12 +72,14 @@ else:
     maxZ = min(maxZ, mapData.z_size)
 maxZ_global = mapData.z_size
 
-#print(proto.Tile_pb2.Tile.FLOOR)
-#proto.Tile_pb2.Tile.STONE
+
 print("copy tiles")
 numBlocks = 0
+
 map_tiles = [[[None for x in range(maxZ_global + 1)]for x in range(maxY + 1)]for x in range(maxX + 1)]
+Tile(map_tiles=map_tiles)
 print("made empty")
+
 while pos < len(unzipped_data):
     lengthLength = get_length_length(unzipped_data, pos)
     msglength = get_msg_length(unzipped_data[pos:pos+lengthLength])
@@ -110,13 +105,14 @@ del protomessage
 del raw_data
 del unzipped_data
 
-copytime = time.time()-start_time
+copytime = time.time() - start_time
 start_time = time.time()
 print(numBlocks, "start ceilings")
 print(len(map_tiles), len(map_tiles[0]), len(map_tiles[0][0]))
 
 makesterrainful = [1, 2, 3, 4, 5, 6, 9, 11, 13, 14, 15]
 needsceiling = [0, 1, 2, 3, 6, 7, 8, 9, 10, 13, 14, 15, 16]
+hasfloor = [1, 2, 3, 4, 5, 6, 7, 8, 9, 13, 14, 15]          # everything where floor gets extended to
 numBlocks = 0
 for x in range(minX, maxX):
     for y in range(minY, maxY):
@@ -130,14 +126,17 @@ for x in range(minX, maxX):
                     if t.terrain.type in needsceiling:
                         t.add_ceiling()
                         terrainful = False
-                    elif t.terrain.type == TileType.WALL:
+                    elif t.terrain.type == TerrainType.WALL:
                         if map_tiles[x][y][z+1] is None:
                             t.add_ceiling()
-                        elif map_tiles[x][y][z+1].terrain.type != TileType.WALL:
+                        elif map_tiles[x][y][z+1].terrain.type != TerrainType.WALL:
                             t.add_ceiling()
 
                 if t.terrain.type in makesterrainful:
                         terrainful = True
+
+                if t.terrain.type in hasfloor:
+                    t.add_floor()
 
 
 ceilingtime = time.time() - start_time
@@ -146,18 +145,10 @@ start_time = time.time()
 
 print(numBlocks, "building objects")
 no_terrain = ['RAMP_TOP', 'BROOK_TOP', 'ENDLESS_PIT']
+
 numBlocks = 0
 num_col = 0
-stepsize = 100
 filename = bpy.data.filepath
-
-obj_meshes = ['BOULDER0', 'BOULDER1', 'BROOK_BED0', 'EMPTY1', 'FLOOR0', 'FLOOR1', 'RAMP0', 'RAMP1', 'SAPLING0',
-              'SAPLING1', 'SHRUB0', 'SHRUB1', 'STAIR_DOWN0', 'STAIR_DOWN1', 'STAIR_UP0', 'STAIR_UP1', 'STAIR_UPDOWN0',
-              'STAIR_UPDOWN1', 'TREE0', 'TREE1']
-
-mesh_dict = {s: type('bm_ext', (object,), dict(v=Vector((0, 0, 0)), bm=bmesh.new())) for s in obj_meshes}
-for k in mesh_dict:
-    mesh_dict[k].bm.from_object(bpy.data.objects[k], bpy.context.scene)
 
 all_v = []
 all_f = []
@@ -166,33 +157,21 @@ for x in range(minX, maxX):
     for y in range(minY, maxY):
         numBlocks += 1
         print("doing column ", numBlocks, "of", (maxX - minX) * (maxY - minY))
-        num_col += 1
         for z in range(minZ, maxZ):
             t = map_tiles[x][y][z]
             if not t is None:
-                identificator = t.terrain.type.name
+                identificator = t.terrain.terrain_type.name
 
-                if identificator == "PEBBLES":
+                if identificator == 'PEBBLES':
                     identificator = 'FLOOR'
                 if identificator == 'FORTIFICATION':
                     identificator = 'WALL'
                 if identificator in no_terrain:
                     identificator = 'EMPTY'
-                if identificator != "WALL":
-                    if t.terrain.has_ceiling:
-                        identificator += '1'
-                    else:
-                        identificator += '0'
-                if not identificator == "EMPTY0":
+                if not identificator == "EMPTY":
                     loc = Vector((t.global_x * 2, t.global_y * - 2, t.global_z * 3))
-                    add_bm = bmesh.new()
-                    if identificator == "WALL":
-                        add_bm = build_wall_bm(t, map_tiles)
-                        bmesh.ops.translate(add_bm, vec=loc, verts=add_bm.verts)
-                    else:
-                        add_bm = mesh_dict[identificator].bm
-                        bmesh.ops.translate(add_bm, vec=loc-mesh_dict[identificator].v, verts=add_bm.verts)
-                        mesh_dict[identificator].v = loc
+                    add_bm = t.build_bmesh()
+                    bmesh.ops.translate(add_bm, vec=loc, verts=add_bm.verts)
 
                     #create some pydata
                     vertindex_offset = len(all_v)

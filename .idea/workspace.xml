@@ -2,35 +2,18 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="22a6ae84-37ff-467d-a0e7-3716d345612b" name="Default" comment="">
-      <change type="DELETED" beforePath="C:\Users\Johannes\Documents\Blender\Blendorf\00dupli.blend" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Johannes\Documents\Blender\Blendorf\00template.blend" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Johannes\Documents\Blender\Blendorf\FirstImport.blend" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Johannes\Documents\Blender\Blendorf\FirstImport_Kopie.blend" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Johannes\Documents\Blender\Blendorf\FirstImport_prelimtest.blend" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Johannes\Documents\Blender\Blendorf\Terrain.py" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Johannes\Documents\Blender\Blendorf\Tile.py" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Johannes\Documents\Blender\Blendorf\brook.dfmap" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Johannes\Documents\Blender\Blendorf\helpers.py" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Johannes\Documents\Blender\Blendorf\helpers_ind.py" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Johannes\Documents\Blender\Blendorf\map_34.11.dfmap" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Johannes\Documents\Blender\Blendorf\mapimport_script.py" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Johannes\Documents\Blender\Blendorf\proto\Block.proto" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Johannes\Documents\Blender\Blendorf\proto\Block_pb2.py" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Johannes\Documents\Blender\Blendorf\proto\Map.proto" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Johannes\Documents\Blender\Blendorf\proto\Map_pb2.py" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Johannes\Documents\Blender\Blendorf\proto\Material.proto" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Johannes\Documents\Blender\Blendorf\proto\Material_pb2.py" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Johannes\Documents\Blender\Blendorf\proto\Plant.proto" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Johannes\Documents\Blender\Blendorf\proto\Plant_pb2.py" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Johannes\Documents\Blender\Blendorf\proto\Tile.proto" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Johannes\Documents\Blender\Blendorf\proto\Tile_pb2.py" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Johannes\Documents\Blender\Blendorf\render_test.png" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Johannes\Documents\Blender\Blendorf\script_dupli.py" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Johannes\Documents\Blender\Blendorf\script_from_pydata.py" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Johannes\Documents\Blender\Blendorf\script_indie.py" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Johannes\Documents\Blender\Blendorf\script_main.py" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Johannes\Documents\Blender\Blendorf\trainregion.dfmap" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Johannes\Documents\Blender\Blendorf\try.dfmap" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\Johannes\Documents\Blender\Blendorf\code\helpers_ind.py" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\Johannes\Documents\Blender\Blendorf\code\mapimport_script.py" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\Johannes\Documents\Blender\Blendorf\code\script_indie.py" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\Johannes\Documents\Blender\Blendorf\code\script_main.py" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/blend_files/00template.blend" afterPath="$PROJECT_DIR$/blend_files/00template.blend" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/code/Terrain.py" afterPath="$PROJECT_DIR$/code/Terrain.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/code/Tile.py" afterPath="$PROJECT_DIR$/code/Tile.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/first.iml" afterPath="$PROJECT_DIR$/.idea/first.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/code/helpers.py" afterPath="$PROJECT_DIR$/code/helpers.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/code/script_dupli.py" afterPath="$PROJECT_DIR$/code/script_dupli.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/code/script_from_pydata.py" afterPath="$PROJECT_DIR$/code/script_from_pydata.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="first.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -52,7 +35,64 @@
     <favorites_list name="first" />
   </component>
   <component name="FileEditorManager">
-    <leaf />
+    <leaf>
+      <file leaf-file-name="script_main.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/code/obsolete/script_main.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="2601" max-vertical-offset="4369">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="script_from_pydata.py" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/code/script_from_pydata.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="-0.018927446" vertical-offset="1950" max-vertical-offset="3570">
+              <caret line="114" column="101" selection-start-line="114" selection-start-column="101" selection-end-line="114" selection-end-column="101" />
+              <folding>
+                <element signature="e#23#34#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Tile.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/code/Tile.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1547">
+              <caret line="20" column="83" selection-start-line="20" selection-start-column="83" selection-end-line="20" selection-end-column="83" />
+              <folding>
+                <element signature="e#23#44#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Terrain.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/code/Terrain.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="833">
+              <caret line="26" column="38" selection-start-line="26" selection-start-column="38" selection-end-line="26" selection-end-column="38" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="helpers.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/code/helpers.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="564" max-vertical-offset="1258">
+              <caret line="7" column="0" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
+              <folding>
+                <element signature="e#23#33#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="FindManager">
     <FindUsagesManager>
@@ -78,6 +118,10 @@
         <option value="$PROJECT_DIR$/script_main.py" />
         <option value="$PROJECT_DIR$/script_from_pydata.py" />
         <option value="$PROJECT_DIR$/script_dupli.py" />
+        <option value="$PROJECT_DIR$/code/helpers.py" />
+        <option value="$PROJECT_DIR$/code/Terrain.py" />
+        <option value="$PROJECT_DIR$/code/script_from_pydata.py" />
+        <option value="$PROJECT_DIR$/code/Tile.py" />
       </list>
     </option>
   </component>
@@ -151,13 +195,63 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="first" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Blendorf" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="code" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="first" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Blendorf" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="code" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="proto" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="first" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Blendorf" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="code" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="obsolete" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="recentsLimit" value="5" />
-    <property name="options.lastSelected" value="preferences.keymap" />
+    <property name="options.lastSelected" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="options.splitter.details.proportions" value="0.2" />
     <property name="options.searchVisible" value="true" />
@@ -179,7 +273,7 @@
       <recent name="C:\Users\Johannes\PycharmProjects\first" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.script_indie">
+  <component name="RunManager" selected="Python.script_from_pydata">
     <configuration default="false" name="mapimport_script" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -255,6 +349,24 @@
       <RunnerSettings RunnerId="PyDebugRunner" />
       <RunnerSettings RunnerId="PythonRunner" />
       <ConfigurationWrapper RunnerId="PyDebugRunner" />
+      <ConfigurationWrapper RunnerId="PythonRunner" />
+      <method />
+    </configuration>
+    <configuration default="false" name="script_from_pydata" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/code" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="first" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/code/script_from_pydata.py" />
+      <option name="PARAMETERS" value="" />
+      <RunnerSettings RunnerId="PythonRunner" />
       <ConfigurationWrapper RunnerId="PythonRunner" />
       <method />
     </configuration>
@@ -379,18 +491,20 @@
       <option name="USE_PATTERN" value="false" />
       <method />
     </configuration>
-    <list size="4">
+    <list size="5">
       <item index="0" class="java.lang.String" itemvalue="Python.mapimport_script" />
       <item index="1" class="java.lang.String" itemvalue="Python.script_indie" />
       <item index="2" class="java.lang.String" itemvalue="Python.Tile" />
       <item index="3" class="java.lang.String" itemvalue="Python.script_main" />
+      <item index="4" class="java.lang.String" itemvalue="Python.script_from_pydata" />
     </list>
     <recent_temporary>
-      <list size="4">
-        <item index="0" class="java.lang.String" itemvalue="Python.script_indie" />
-        <item index="1" class="java.lang.String" itemvalue="Python.script_main" />
-        <item index="2" class="java.lang.String" itemvalue="Python.Tile" />
-        <item index="3" class="java.lang.String" itemvalue="Python.mapimport_script" />
+      <list size="5">
+        <item index="0" class="java.lang.String" itemvalue="Python.script_from_pydata" />
+        <item index="1" class="java.lang.String" itemvalue="Python.script_indie" />
+        <item index="2" class="java.lang.String" itemvalue="Python.script_main" />
+        <item index="3" class="java.lang.String" itemvalue="Python.Tile" />
+        <item index="4" class="java.lang.String" itemvalue="Python.mapimport_script" />
       </list>
     </recent_temporary>
   </component>
@@ -428,17 +542,17 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-4" y="-4" width="1316" height="776" extended-state="6" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.35596707" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.35454544" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32124874" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24932103" sideWeight="0.4992248" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25174826" sideWeight="0.4992248" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25174826" sideWeight="0.4992248" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2962963" sideWeight="0.64910376" order="10" side_tool="true" content_ui="tabs" x="31" y="331" width="1841" height="361" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24944568" sideWeight="0.5007752" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32952183" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2962963" sideWeight="0.35089624" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.29545453" sideWeight="0.35089624" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -467,10 +581,68 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="27" />
+      <option name="time" value="29" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/code/script_from_pydata.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="2040" max-vertical-offset="3553">
+          <caret line="143" column="0" selection-start-line="143" selection-start-column="0" selection-end-line="143" selection-end-column="0" />
+          <folding>
+            <element signature="e#23#34#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/code/Tile.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="340" max-vertical-offset="1003">
+          <caret line="20" column="54" selection-start-line="20" selection-start-column="54" selection-end-line="20" selection-end-column="54" />
+          <folding>
+            <element signature="e#23#44#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/code/Terrain.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="510" max-vertical-offset="765">
+          <caret line="30" column="38" selection-start-line="30" selection-start-column="38" selection-end-line="30" selection-end-column="38" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/code/helpers.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="216" max-vertical-offset="1258">
+          <caret line="26" column="0" selection-start-line="26" selection-start-column="0" selection-end-line="26" selection-end-column="0" />
+          <folding>
+            <element signature="e#23#33#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/code/script_from_pydata.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3842">
+          <caret line="9" column="0" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
+          <folding>
+            <element signature="e#23#34#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/code/helpers.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="34" max-vertical-offset="1258">
+          <caret line="2" column="0" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
+          <folding>
+            <element signature="e#23#33#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$APPLICATION_HOME_DIR$/helpers/pydev/pydevd.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="29444" max-vertical-offset="29563">
@@ -538,6 +710,82 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="2.5725677" vertical-offset="26726" max-vertical-offset="28458">
           <caret line="1732" column="0" selection-start-line="1732" selection-start-column="0" selection-end-line="1733" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/code/indie_scripts/script_indie.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.3753943" vertical-offset="0" max-vertical-offset="3383">
+          <caret line="14" column="25" selection-start-line="14" selection-start-column="25" selection-end-line="14" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/code/indie_scripts/helpers_ind.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1105">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/code/obsolete/mapimport_script.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1734">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/code/obsolete/script_main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="4369">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/code/proto/Tile.proto">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-0.08044164" vertical-offset="51" max-vertical-offset="1173">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/code/helpers.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="3" max-vertical-offset="1258">
+          <caret line="7" column="0" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
+          <folding>
+            <element signature="e#23#33#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/code/Terrain.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="153" max-vertical-offset="833">
+          <caret line="26" column="38" selection-start-line="26" selection-start-column="38" selection-end-line="26" selection-end-column="38" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/code/Tile.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1547">
+          <caret line="20" column="83" selection-start-line="20" selection-start-column="83" selection-end-line="20" selection-end-column="83" />
+          <folding>
+            <element signature="e#23#44#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/code/script_from_pydata.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-0.018927446" vertical-offset="1950" max-vertical-offset="3570">
+          <caret line="114" column="101" selection-start-line="114" selection-start-column="101" selection-end-line="114" selection-end-column="101" />
+          <folding>
+            <element signature="e#23#34#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

@@ -5,6 +5,7 @@ import bmesh
 import math
 from mathutils import Matrix
 
+
 def b2i(byte_input):
     return int.from_bytes(byte_input, byteorder='little')
 

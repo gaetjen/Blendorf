@@ -2,7 +2,8 @@ __author__ = 'JoeJoe'
 
 from enum import IntEnum
 
-class TileType(IntEnum):
+
+class TerrainType(IntEnum):
         EMPTY = 0
         FLOOR = 1
         BOULDER = 2
@@ -21,29 +22,23 @@ class TileType(IntEnum):
         SHRUB = 15
         ENDLESS_PIT = 16
 
+
 class Terrain:
+    """A class containing more context information about a Tile's terrain
+
+    Attributes:
+        terrain_type    base terrain type for the Tile
+        has_ceiling     boolean whether or not a ceiling is above the tile
+        has_floor       boolean whether or not the tile has a floor, for construction purposes
+    """
     has_ceiling = False
+    has_floor = False
 
-    def __init__(self, type):
-        self.type = TileType(type)
-
-    """
-    def identificator(self):
-        """
-    """
-        if self.type is None:
-            print("NONE TYPE")
-            return "none"
-        else:
-        """
-    """
-        name_id = self.type.name
-        if self.has_ceiling:
-            name_id += '1'
-        else:
-            name_id += '0'
-        return name_id
-    """
+    def __init__(self, terrain_type):
+        self.terrain_type = TerrainType(terrain_type)
 
     def add_ceiling(self):
         self.has_ceiling = True
+
+    def add_floor(self):
+        self.has_floor = True

@@ -6,7 +6,7 @@ import proto.Material_pb2 as Material_pb2
 import proto.Plant_pb2 as Plant_pb2
 import proto.Tile_pb2 as Tile_pb2
 from Tile import Tile
-from Terrain import TileType
+from Terrain import TerrainType
 from Terrain import Terrain
 import zlib
 import bpy
@@ -126,10 +126,10 @@ for x in range(minX, maxX):
                     if t.terrain.type in needsceiling:
                         t.add_ceiling()
                         terrainful = False
-                    elif t.terrain.type == TileType.WALL:
+                    elif t.terrain.type == TerrainType.WALL:
                         if map_tiles[x][y][z+1] is None:
                             t.add_ceiling()
-                        elif map_tiles[x][y][z+1].terrain.type != TileType.WALL:
+                        elif map_tiles[x][y][z+1].terrain.type != TerrainType.WALL:
                             t.add_ceiling()
 
                 if t.terrain.type in makesterrainful:
