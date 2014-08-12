@@ -14,12 +14,12 @@ from helpers import b2i, get_msg_length, get_length_length
 
 
 # filename
-f = open('trainregion.dfmap', "rb")
+f = open('../maps/try.dfmap', "rb")
 # min and max coordinates to build
 # min is inclusive, max is exclusive
 # -1 for whole map
-minX = 70
-maxX = 90
+minX = -1
+maxX = -1
 minY = -1
 maxY = -1
 minZ = -1
@@ -77,7 +77,7 @@ print("copy tiles")
 numBlocks = 0
 
 map_tiles = [[[None for x in range(maxZ_global + 1)]for x in range(maxY + 1)]for x in range(maxX + 1)]
-Tile(map_tiles=map_tiles)
+Tile.map_tiles = map_tiles
 print("made empty")
 
 while pos < len(unzipped_data):
@@ -111,31 +111,23 @@ print(numBlocks, "start ceilings")
 print(len(map_tiles), len(map_tiles[0]), len(map_tiles[0][0]))
 
 makesterrainful = [1, 2, 3, 4, 5, 6, 9, 11, 13, 14, 15]
-needsceiling = [0, 1, 2, 3, 6, 7, 8, 9, 10, 13, 14, 15, 16]
 hasfloor = [1, 2, 3, 4, 5, 6, 7, 8, 9, 13, 14, 15]          # everything where floor gets extended to
 numBlocks = 0
 for x in range(minX, maxX):
     for y in range(minY, maxY):
         terrainful = False
         for z in reversed(range(minZ, maxZ_global)):
-            #input("add stuff?")
             t = map_tiles[x][y][z]
             if not t is None:
                 numBlocks += 1
                 if terrainful:
-                    if t.terrain.type in needsceiling:
-                        t.add_ceiling()
-                        terrainful = False
-                    elif t.terrain.type == TerrainType.WALL:
-                        if map_tiles[x][y][z+1] is None:
-                            t.add_ceiling()
-                        elif map_tiles[x][y][z+1].terrain.type != TerrainType.WALL:
-                            t.add_ceiling()
+                    t.add_ceiling()
+                    terrainful = False
 
-                if t.terrain.type in makesterrainful:
+                if t.terrain_type() in makesterrainful:
                         terrainful = True
 
-                if t.terrain.type in hasfloor:
+                if t.terrain_type() in hasfloor:
                     t.add_floor()
 
 
@@ -160,7 +152,7 @@ for x in range(minX, maxX):
         for z in range(minZ, maxZ):
             t = map_tiles[x][y][z]
             if not t is None:
-                identificator = t.terrain.terrain_type.name
+                identificator = t.terrain_type().name
 
                 if identificator == 'PEBBLES':
                     identificator = 'FLOOR'
@@ -171,6 +163,9 @@ for x in range(minX, maxX):
                 if not identificator == "EMPTY":
                     loc = Vector((t.global_x * 2, t.global_y * - 2, t.global_z * 3))
                     add_bm = t.build_bmesh()
+                    if add_bm is None:
+                        add_bm = bmesh.new()
+                        add_bm.from_object(bpy.data.objects[identificator], bpy.context.scene)
                     bmesh.ops.translate(add_bm, vec=loc, verts=add_bm.verts)
 
                     #create some pydata
