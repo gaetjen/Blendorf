@@ -14,7 +14,7 @@ from helpers import b2i, get_msg_length, get_length_length
 
 
 # filename
-f = open('../maps/try.dfmap', "rb")
+f = open('../maps/trainregion.dfmap', "rb")
 # min and max coordinates to build
 # min is inclusive, max is exclusive
 # -1 for whole map
@@ -160,18 +160,17 @@ for x in range(minX, maxX):
                     identificator = 'WALL'
                 if identificator in no_terrain:
                     identificator = 'EMPTY'
-                if not identificator == "EMPTY":
-                    loc = Vector((t.global_x * 2, t.global_y * - 2, t.global_z * 3))
-                    add_bm = t.build_bmesh()
-                    if add_bm is None:
-                        add_bm = bmesh.new()
-                        add_bm.from_object(bpy.data.objects[identificator], bpy.context.scene)
-                    bmesh.ops.translate(add_bm, vec=loc, verts=add_bm.verts)
+                loc = Vector((t.global_x * 2, t.global_y * - 2, t.global_z * 3))
+                add_bm = t.build_bmesh()
+                if add_bm is None:
+                    add_bm = bmesh.new()
+                    add_bm.from_object(bpy.data.objects[identificator], bpy.context.scene)
+                bmesh.ops.translate(add_bm, vec=loc, verts=add_bm.verts)
 
-                    #create some pydata
-                    vertindex_offset = len(all_v)
-                    all_v.extend(v.co[:] for v in add_bm.verts)
-                    all_f.extend([[v.index + vertindex_offset for v in f.verts] for f in add_bm.faces])
+                #create some pydata
+                vertindex_offset = len(all_v)
+                all_v.extend(v.co[:] for v in add_bm.verts)
+                all_f.extend([[v.index + vertindex_offset for v in f.verts] for f in add_bm.faces])
 
 me = bpy.data.meshes.new("landscape")
 me.from_pydata(all_v, [], all_f)

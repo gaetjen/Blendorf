@@ -95,6 +95,8 @@ class Tile:
             rtn = self.build_floor_bmesh()
         if self.terrain_type() != TerrainType.FLOOR:
             rtn.from_object(bpy.data.objects[self.terrain_type().name], bpy.context.scene)
+        if self.terrain.has_ceiling:
+            self.add_ceiling_mesh(rtn)
         bmesh.ops.remove_doubles(rtn, verts=rtn.verts, dist=0.0001)
         bmesh.ops.dissolve_limit(rtn, angle_limit=math.pi/90, use_dissolve_boundaries=False,
                                  verts=rtn.verts, edges=rtn.edges)
@@ -141,6 +143,9 @@ class Tile:
 
         self.add_directional_mesh_parts('WALL_', rtn)
 
+        if self.terrain.has_ceiling:
+            self.add_ceiling_mesh(rtn)
+
         bmesh.ops.remove_doubles(rtn, verts=rtn.verts, dist=0.0001)
         bmesh.ops.dissolve_limit(rtn, angle_limit=math.pi/90, use_dissolve_boundaries=False,
                                  verts=rtn.verts, edges=rtn.edges)
@@ -155,9 +160,6 @@ class Tile:
         rtn.from_object(bpy.data.objects['FLOOR_CENTER'], bpy.context.scene)
 
         self.add_directional_mesh_parts('FLOOR_', rtn)
-        bmesh.ops.remove_doubles(rtn, verts=rtn.verts, dist=0.0001)
-        bmesh.ops.dissolve_limit(rtn, angle_limit=math.pi/90, use_dissolve_boundaries=False,
-                                 verts=rtn.verts, edges=rtn.edges)
 
         return rtn
 
@@ -171,6 +173,53 @@ class Tile:
             object_string = self.build_object_id(object_string, corner_directions)
             if len(object_string) > 0:
                 l = len(bm.verts)
+                bm.from_object(bpy.data.objects[object_string], bpy.context.scene)
+                bmesh.ops.rotate(bm, verts=bm.verts[l:len(bm.verts)], cent=center, matrix=self.rot_dict[d])
+            corner_directions[0][0] = d
+            corner_directions[1][0] = d
+
+    def build_ceiling_id(self, directions):
+        if self.terrain_type().name == 'WALL':
+            return self.build_wall_ceiling_id(directions)
+        rtn = 'CEILING_'
+        for e in directions:
+            neighbor_tile_a = self.get_tile_in_direction(e, 1)
+            if neighbor_tile_a is None or neighbor_tile_a.terrain.has_floor:
+                rtn += 'FL'
+            else:
+                rtn += 'EM'
+        return rtn
+
+    def build_wall_ceiling_id(self, directions):
+        rtn = 'CEILING_'
+        for e in directions:
+            neighbor_tile_a = self.get_tile_in_direction(e, 1)
+            neighbor_tile = self.get_tile_in_direction(e)
+            if neighbor_tile is None:
+                return ''
+            elif neighbor_tile.terrain_type().name == 'WALL':
+                rtn += 'WA'
+            elif neighbor_tile_a is None or neighbor_tile_a.terrain.has_floor:
+                rtn += 'FL'
+            else:
+                rtn += 'EM'
+        return rtn
+
+    def add_ceiling_mesh(self, bm):
+        tile_above = self.get_tile_in_direction([], 1)
+        if tile_above is None and self.terrain_type().name != 'WALL':
+            bm.from_object(bpy.data.objects['CEILING_NONE'], bpy.context.scene)
+            return
+        if self.terrain_type().name != 'WALL':
+            bm.from_object(bpy.data.objects['CEILING_CENTER'], bpy.context.scene)
+        center = (1, -1, 0)
+        corner_directions = [[self.W], [self.W, self.N], [self.N]]
+        for d in self.Direction:
+            corner_directions[1][1] = d
+            corner_directions[2][0] = d
+            object_string = self.build_ceiling_id(corner_directions)
+            l = len(bm.verts)
+            if len(object_string) > 0:
                 bm.from_object(bpy.data.objects[object_string], bpy.context.scene)
                 bmesh.ops.rotate(bm, verts=bm.verts[l:len(bm.verts)], cent=center, matrix=self.rot_dict[d])
             corner_directions[0][0] = d
