@@ -14,14 +14,14 @@ from helpers import b2i, get_msg_length, get_length_length
 
 
 # filename
-f = open('../maps/trainregion.dfmap', "rb")
+f = open('../maps/brook.dfmap', "rb")
 # min and max coordinates to build
 # min is inclusive, max is exclusive
 # -1 for whole map
-minX = -1
-maxX = -1
-minY = -1
-maxY = -1
+minX = 30
+maxX = 120
+minY = 30
+maxY = 120
 minZ = -1
 maxZ = -1
 
@@ -30,6 +30,7 @@ raw_data = f.read()
 f.close()
 unzipped_data = zlib.decompress(raw_data, 16+zlib.MAX_WBITS)
 header = unzipped_data[0:4]
+
 
 header_check = 0x50414DDF
 if b2i(header) == header_check:
