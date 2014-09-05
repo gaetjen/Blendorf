@@ -14,7 +14,7 @@ from helpers import b2i, get_msg_length, get_length_length
 
 
 # filename
-f = open('../maps/brook.dfmap', "rb")
+f = open('../maps/try.dfmap', "rb")
 # min and max coordinates to build
 # min is inclusive, max is exclusive
 # -1 for whole map
@@ -161,7 +161,7 @@ for x in range(minX, maxX):
                     identificator = 'WALL'
                 if identificator in no_terrain:
                     identificator = 'EMPTY'
-                loc = Vector((t.global_x * 2, t.global_y * - 2, t.global_z * 3))
+                loc = Vector((t.global_x * 2, t.global_y * -2, t.global_z * 3))
                 add_bm = t.build_bmesh()
                 if add_bm is None:
                     add_bm = bmesh.new()
