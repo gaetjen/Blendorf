@@ -19,9 +19,9 @@ f = open('../maps/try.dfmap', "rb")
 # min is inclusive, max is exclusive
 # -1 for whole map
 minX = 30
-maxX = 120
+maxX = 90
 minY = 30
-maxY = 120
+maxY = 90
 minZ = -1
 maxZ = -1
 
@@ -112,7 +112,7 @@ print(numBlocks, "start ceilings")
 print(len(map_tiles), len(map_tiles[0]), len(map_tiles[0][0]))
 
 makesterrainful = [1, 2, 3, 4, 5, 6, 9, 11, 13, 14, 15]
-hasfloor = [1, 2, 3, 4, 5, 6, 7, 8, 9, 13, 14, 15]          # everything where floor gets extended to
+hasfloor = [1, 2, 3, 4, 5, 6, 7, 8, 13, 14, 15]          # everything where floor gets extended to
 numBlocks = 0
 for x in range(minX, maxX):
     for y in range(minY, maxY):
@@ -183,7 +183,7 @@ bpy.context.scene.update()
 terraintime = time.time()-start_time
 start_time = time.time()
 
-
+print("finalizing objects and cleaning up geometry")
 bpy.context.scene.objects.active = bpy.data.objects["Land"]
 bpy.ops.object.select_pattern(pattern="Land*")
 bpy.ops.object.mode_set(mode='EDIT')
