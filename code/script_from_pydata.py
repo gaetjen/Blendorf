@@ -55,7 +55,7 @@ for m in mapData.inorganic_material:
 for m in mapData.organic_material:
     material_lib[1].append(m.name)
 
-#determine min and max stuff
+# determine min and max stuff
 minX = max(1, minX)
 minY = max(1, minY)
 minZ = max(1, minZ)
@@ -111,25 +111,19 @@ start_time = time.time()
 print(numBlocks, "start ceilings")
 print(len(map_tiles), len(map_tiles[0]), len(map_tiles[0][0]))
 
-makesterrainful = [1, 2, 3, 4, 5, 6, 9, 11, 13, 14, 15]
-hasfloor = [1, 2, 3, 4, 5, 6, 7, 8, 13, 14, 15]          # everything where floor gets extended to
 numBlocks = 0
 for x in range(minX, maxX):
     for y in range(minY, maxY):
         terrainful = False
         for z in reversed(range(minZ, maxZ_global)):
             t = map_tiles[x][y][z]
-            if not t is None:
+            if t is not None:
                 numBlocks += 1
                 if terrainful:
                     t.add_ceiling()
                     terrainful = False
-
-                if t.terrain_type() in makesterrainful:
-                        terrainful = True
-
-                if t.terrain_type() in hasfloor:
-                    t.add_floor()
+                if t.terrainful():
+                    terrainful = True
 
 
 ceilingtime = time.time() - start_time
@@ -152,23 +146,11 @@ for x in range(minX, maxX):
         print("doing column ", numBlocks, "of", (maxX - minX) * (maxY - minY))
         for z in range(minZ, maxZ):
             t = map_tiles[x][y][z]
-            if not t is None:
-                identificator = t.terrain_type().name
-
-                if identificator == 'PEBBLES':
-                    identificator = 'FLOOR'
-                if identificator == 'FORTIFICATION':
-                    identificator = 'WALL'
-                if identificator in no_terrain:
-                    identificator = 'EMPTY'
+            if t is not None:
                 loc = Vector((t.global_x * 2, t.global_y * -2, t.global_z * 3))
                 add_bm = t.build_bmesh()
-                if add_bm is None:
-                    add_bm = bmesh.new()
-                    add_bm.from_object(bpy.data.objects[identificator], bpy.context.scene)
                 bmesh.ops.translate(add_bm, vec=loc, verts=add_bm.verts)
-
-                #create some pydata
+                # create some pydata
                 vertindex_offset = len(all_v)
                 all_v.extend(v.co[:] for v in add_bm.verts)
                 all_f.extend([[v.index + vertindex_offset for v in f.verts] for f in add_bm.faces])

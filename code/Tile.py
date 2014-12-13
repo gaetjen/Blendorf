@@ -6,7 +6,8 @@ import bpy
 import bmesh
 import math
 from mathutils import Matrix
-from enum import IntEnum
+from BmeshFactory import BmeshFactory
+from Direction import Direction
 
 class Tile:
     """A class that contains information on a specific Tile in the map
@@ -28,35 +29,10 @@ class Tile:
         terrain_type()  exposes the terrain_type attribute of the terrain attribute
     """
     map_tiles = []
-    # mesh_dict = []
-
-    class Direction(IntEnum):
-        North = 0
-        East = 1
-        South = 2
-        West = 3
-
-        def next(self):
-            return Tile.Direction((self + 1) % 4)
-
-        def prev(self):
-            return Tile.Direction((self - 1) % 4)
-
-        def is_neighbor(self, direction):
-            if self + 1 == direction or self - 1 == direction:
-                return True
-            else:
-                return False
-
     N = Direction.North
     E = Direction.East
     S = Direction.South
     W = Direction.West
-    rot_dict = {N: Matrix.Rotation(0, 3, 'Z'), E: Matrix.Rotation(-math.pi/2, 3, 'Z'),
-                S: Matrix.Rotation(math.pi, 3, 'Z'), W: Matrix.Rotation(math.pi / 2, 3, 'Z')}
-
-    no_extra_floors = [TerrainType.RAMP, TerrainType.STAIR_DOWN, TerrainType.STAIR_UP,
-                       TerrainType.STAIR_UPDOWN, TerrainType.FORTIFICATION]
 
     def __init__(self, proto_tile=None, block=None, mat_library=None):
         # obj_meshes = ['BOULDER', 'BROOK_BED', 'RAMP', 'SAPLING', 'SHRUB',
@@ -94,28 +70,15 @@ class Tile:
     def terrain_type(self):
         return self.terrain.terrain_type
 
+    def terrainful(self):
+        return self.terrain.terrainful
+
     def add_ceiling(self):
         self.terrain.add_ceiling()
 
-    def add_floor(self):
-        self.terrain.add_floor()
-
     def build_bmesh(self):
-        rtn = bmesh.new()
-        if self.terrain_type() == TerrainType.WALL or self.terrain_type() == TerrainType.FORTIFICATION:
-            rtn = self.build_wall_bmesh()
-        elif self.terrain_type() == TerrainType.RAMP:
-            rtn = self.build_ramp_bmesh()
-        elif self.terrain.has_floor:
-            rtn = self.build_floor_bmesh()
-        elif self.terrain_type() == TerrainType.BROOK_BED:
-            rtn = self.build_brook_bmesh()
-        rtn.from_object(bpy.data.objects[self.terrain_type().name], bpy.context.scene)
-        self.add_ceiling_bmesh(rtn)
-        bmesh.ops.remove_doubles(rtn, verts=rtn.verts, dist=0.0001)
-        bmesh.ops.dissolve_limit(rtn, angle_limit=math.pi/90, use_dissolve_boundaries=False,
-                                 verts=rtn.verts, edges=rtn.edges)
-        return rtn
+        return BmeshFactory.build(self)
+
 
     def get_tile_in_direction(self, directions, z=0):
         x = self.global_x
@@ -160,16 +123,7 @@ class Tile:
         self.add_directional_mesh_parts('WALL_', rtn)
         return rtn
 
-    def build_floor_bmesh(self):
-        rtn = bmesh.new()
-        if self.terrain.terrain_type in self.no_extra_floors:
-            return rtn
 
-        rtn.from_object(bpy.data.objects['FLOOR_CENTER'], bpy.context.scene)
-
-        self.add_directional_mesh_parts('FLOOR_', rtn)
-
-        return rtn
 
     def build_ramp_bmesh(self):
         rtn = bmesh.new()
@@ -496,21 +450,7 @@ class Tile:
         else:
             return neighbor_t.terrain_type() == TerrainType.WALL and neighbor_t_a.terrain_type() != TerrainType.WALL
 
-    def add_directional_mesh_parts(self, prefix, bm):
 
-        center = (1, -1, 0)
-        corner_directions = [[self.W], [self.W, self.N], [self.N]]
-        for d in self.Direction:
-            corner_directions[1][1] = d
-            corner_directions[2][0] = d
-            l = len(bm.verts)
-
-            object_string = self.build_object_id(prefix, corner_directions)
-            if len(object_string) > 0:
-                bm.from_object(bpy.data.objects[object_string], bpy.context.scene)
-                bmesh.ops.rotate(bm, verts=bm.verts[l:len(bm.verts)], cent=center, matrix=self.rot_dict[d])
-            corner_directions[0][0] = d
-            corner_directions[1][0] = d
 
     def add_ceiling_bmesh(self, bm):
         # consider doing complex ceiling for all tiles, because walls can protrude into them

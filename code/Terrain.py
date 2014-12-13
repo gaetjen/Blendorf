@@ -27,18 +27,61 @@ class Terrain:
     """A class containing more context information about a Tile's terrain
 
     Attributes:
-        terrain_type    base terrain type for the Tile
-        has_ceiling     boolean whether or not a ceiling is above the tile
-        has_floor       boolean whether or not the tile has a floor, for construction purposes
+        terrain_type            base terrain type for the Tile
+        terrainful              the next tile under this one needs a ceiling
+        has_ceiling             a ceiling is above the tile
+        has_floor_center        the tile has a floor centerpiece
+        extend_to               neighboring floors connect to this tile
+        connect_diag            neighboring tiles can get connected diagonally through this tile
+        edge_to                 adjacent floors need edges in this direction
     """
+    # list of terrains, that are just a floor, maybe with more stuff placed on it
+    floor_terrains = [1, 2, 3, 6, 13, 14, 15]
+    # list of terrains, that have no objects
+    empty_terrains = [0, 12, 16]
+    # list containing walls and stairs, because they behave the same
+    wall_terrains = [4, 5, 7, 8, 11]
+    # list of terrains, that get terrainful set to true
+    terrainful_terrains = [1, 2, 3, 4, 5, 6, 9, 11, 13, 14, 15]
     has_ceiling = False
-    has_floor = False
 
     def __init__(self, terrain_type):
         self.terrain_type = TerrainType(terrain_type)
 
+        if terrain_type in self.terrainful_terrains:
+            self.terrainful = True
+        else:
+            self.terrainful = False
+
+        if terrain_type in self.floor_terrains:
+            self.has_floor_center = True
+            self.extend_to =        True
+            self.connect_diag =     True
+            self.make_edges_to =    False
+
+        if terrain_type in self.wall_terrains:
+            self.has_floor_center = False
+            self.extend_to =        True
+            self.connect_diag =     True
+            self.make_edges_to =    False
+
+        if terrain_type == TerrainType.RAMP:
+            self.has_floor_center = False
+            self.extend_to =        True
+            self.connect_diag =     False
+            self.make_edges_to =    False
+
+        if terrain_type == TerrainType.RAMP_TOP:
+            self.has_floor_center = False
+            self.extend_to =        True
+            self.connect_diag =     False
+            self.make_edges_to =    True
+
+        if terrain_type in self.empty_terrains:
+            self.has_floor_center = False
+            self.extend_to =        False
+            self.connect_diag =     True
+            self.make_edges_to =    True
+
     def add_ceiling(self):
         self.has_ceiling = True
-
-    def add_floor(self):
-        self.has_floor = True
