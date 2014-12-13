@@ -67,10 +67,10 @@ class BmeshFactory:
                 if tile.terrain.extend_to:
                     for e in corner_directions:
                         neighbor_tile = tile.get_tile_in_direction(e)
-                        if neighbor_tile.terrain.extend_to and not tile.terrain.make_edges_to:
+                        if neighbor_tile is None or (neighbor_tile.terrain.extend_to and not tile.terrain.make_edges_to):
                             add_corner = True
                     neighbor_tile = tile.get_tile_in_direction([d])
-                    if neighbor_tile.terrain.make_edges_to:
+                    if neighbor_tile is None or neighbor_tile.terrain.make_edges_to:
                         mesh.from_object(bpy.data.objects['FLOOR_Cen'], bpy.context.scene)
                 # for tiles that do not get extended to but help connect diagonals
                 if tile.terrain.connect_diag and tile.terrain.make_edges_to:
@@ -92,13 +92,13 @@ class BmeshFactory:
                     mesh.from_object(bpy.data.objects['FLOOR_CORNER'], bpy.context.scene)
                 neighbor_tile = tile.get_tile_in_direction(corner_directions[0])
                 try:
-                    if neighbor_tile.terrain.make_edges_to:
+                    if neighbor_tile is None or neighbor_tile.terrain.make_edges_to:
                         mesh.from_object(bpy.data.objects['FLOOR_Cor0'], bpy.context.scene)
                     neighbor_tile = tile.get_tile_in_direction(corner_directions[2])
-                    if neighbor_tile.terrain.make_edges_to:
+                    if neighbor_tile is None or neighbor_tile.terrain.make_edges_to:
                         mesh.from_object(bpy.data.objects['FLOOR_Cor2'], bpy.context.scene)
                 except AttributeError:
-                    pass
+                    print("unexpected None Type Attribute Error")
             elif tile.terrain.extend_to:
                 mesh.from_object(bpy.data.objects['FLOOR_ID'], bpy.context.scene)
 
@@ -160,7 +160,7 @@ class BmeshFactory:
                 elif neighbor_terrains[1] != wall:
                     rtn.from_object(bpy.data.objects['WALL_OD'], bpy.context.scene)
                     if neighbor_tiles[1].terrain.make_edges_to:
-                        rtn.from_object(bpy.data.objects['FLOOR_OD'], bpy.context.scene)
+                        rtn.from_object(bpy.data.objects['FLOOR_ODW'], bpy.context.scene)
 
             bmesh.ops.rotate(rtn, verts=rtn.verts[l:len(rtn.verts)], cent=center, matrix=BmeshFactory.rot_dict[d])
             corner_directions[0][0] = d
@@ -170,11 +170,17 @@ class BmeshFactory:
     @staticmethod
     def build_fortification(tile):
         rtn = bmesh.new()
+        rtn.from_object(bpy.data.objects['FORTIFICATION'], bpy.context.scene)
+        BmeshFactory.add_floor_corners(rtn, tile)
         return rtn
 
     @staticmethod
     def build_stair(tile):
         rtn = bmesh.new()
+        if tile.terrain_type() == TerrainType.STAIR_UPDOWN:
+            rtn.from_object(bpy.data.objects['STAIR_UP'], bpy.context.scene)
+        rtn.from_object(bpy.data.objects['STAIR_DOWN'], bpy.context.scene)
+        BmeshFactory.add_floor_corners(rtn, tile)
         return rtn
 
     @staticmethod
