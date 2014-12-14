@@ -7,6 +7,7 @@ import bmesh
 import math
 from mathutils import Matrix
 from Direction import Direction
+import random
 
 class BmeshFactory:
     """A factory to build the final bmesh for the tiles
@@ -90,13 +91,16 @@ class BmeshFactory:
                         num_walls += 1
                 if num_walls < 3:
                     mesh.from_object(bpy.data.objects['FLOOR_CORNER'], bpy.context.scene)
-                neighbor_tile = tile.get_tile_in_direction(corner_directions[0])
                 try:
+                    neighbor_tile = tile.get_tile_in_direction(corner_directions[0])
+                    diag_tile = tile.get_tile_in_direction(corner_directions[1])
                     if neighbor_tile is None or neighbor_tile.terrain.make_edges_to:
-                        mesh.from_object(bpy.data.objects['FLOOR_Cor0'], bpy.context.scene)
+                        if diag_tile is None or not (diag_tile.terrain.extend_to and neighbor_tile.terrain.connect_diag):
+                            mesh.from_object(bpy.data.objects['FLOOR_Cor0'], bpy.context.scene)
                     neighbor_tile = tile.get_tile_in_direction(corner_directions[2])
                     if neighbor_tile is None or neighbor_tile.terrain.make_edges_to:
-                        mesh.from_object(bpy.data.objects['FLOOR_Cor2'], bpy.context.scene)
+                        if diag_tile is None or not (diag_tile.terrain.extend_to and neighbor_tile.terrain.connect_diag):
+                            mesh.from_object(bpy.data.objects['FLOOR_Cor2'], bpy.context.scene)
                 except AttributeError:
                     print("unexpected None Type Attribute Error")
             elif tile.terrain.extend_to:
@@ -161,6 +165,13 @@ class BmeshFactory:
                     rtn.from_object(bpy.data.objects['WALL_OD'], bpy.context.scene)
                     if neighbor_tiles[1].terrain.make_edges_to:
                         rtn.from_object(bpy.data.objects['FLOOR_ODW'], bpy.context.scene)
+            raise_floor = False
+            for e in neighbor_terrains:
+                if e == TerrainType.BROOK_BED:
+                    raise_floor = True
+
+            if raise_floor:
+                BmeshFactory.raise_to_brook(rtn, l)
 
             bmesh.ops.rotate(rtn, verts=rtn.verts[l:len(rtn.verts)], cent=center, matrix=BmeshFactory.rot_dict[d])
             corner_directions[0][0] = d
@@ -191,7 +202,20 @@ class BmeshFactory:
     @staticmethod
     def build_brook(tile):
         rtn = bmesh.new()
+        rtn.from_object(bpy.data.objects['FLOOR_CENTER'], bpy.context.scene)
+        BmeshFactory.add_floor_corners(rtn, tile)
+        if random.randint(1, 15) == 1:
+            rtn.from_object(bpy.data.objects['BROOK_BOULDER'], bpy.context.scene)
+        bmesh.ops.translate(rtn, vec=(0, 0, 2.5), verts=rtn.verts)
         return rtn
+
+    @staticmethod
+    def raise_to_brook(mesh, length):
+        raise_verts = []
+        for i in range(length, len(mesh.verts)):
+            if mesh.verts[i].co[2] < 1:
+                raise_verts.append(mesh.verts[i])
+        bmesh.ops.translate(mesh, vec=(0, 0, 2.5), verts=raise_verts)
 
     # @staticmethod
     # def add_ceiling_bmesh(tile):
