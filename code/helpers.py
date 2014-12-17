@@ -6,6 +6,10 @@ import math
 from mathutils import Matrix
 
 
+TILE_HEIGHT = 3
+TILE_WIDTH = 2
+BROOK_DEPTH = 0.5
+
 def b2i(byte_input):
     return int.from_bytes(byte_input, byteorder='little')
 

@@ -8,6 +8,8 @@ import math
 from mathutils import Matrix
 from Direction import Direction
 import random
+from helpers import BROOK_DEPTH, TILE_HEIGHT, TILE_WIDTH
+
 
 class BmeshFactory:
     """A factory to build the final bmesh for the tiles
@@ -18,7 +20,7 @@ class BmeshFactory:
     W = Direction.West
     rot_dict = {N: Matrix.Rotation(0, 3, 'Z'), E: Matrix.Rotation(-math.pi/2, 3, 'Z'),
                 S: Matrix.Rotation(math.pi, 3, 'Z'), W: Matrix.Rotation(math.pi / 2, 3, 'Z')}
-    
+
     @staticmethod
     def build(tile):
         """main function for building the bmesh
@@ -39,7 +41,6 @@ class BmeshFactory:
         elif tile.terrain_type() == TerrainType.BROOK_BED:
             rtn = BmeshFactory.build_brook(tile)
 
-        # BmeshFactory.add_ceiling_bmesh(rtn)
         bmesh.ops.remove_doubles(rtn, verts=rtn.verts, dist=0.0001)
         bmesh.ops.dissolve_limit(rtn, angle_limit=math.pi/90, use_dissolve_boundaries=False,
                                  verts=rtn.verts, edges=rtn.edges)
@@ -57,8 +58,11 @@ class BmeshFactory:
     @staticmethod
     def add_floor_corners(mesh, tile):
         """adds the corner parts of a floor"""
-        center = (1, -1, 0)
+        center = (TILE_WIDTH / 2, -TILE_WIDTH / 2, 0)
         corner_directions = [[BmeshFactory.W], [BmeshFactory.W, BmeshFactory.N], [BmeshFactory.N]]
+        tile_below = tile.get_tile_in_direction([], -1)
+        if tile_below is not None:
+            ceiling_below = True
         for d in Direction:
             corner_directions[1][1] = d
             corner_directions[2][0] = d
@@ -91,6 +95,9 @@ class BmeshFactory:
                         num_walls += 1
                 if num_walls < 3:
                     mesh.from_object(bpy.data.objects['FLOOR_CORNER'], bpy.context.scene)
+                    if ceiling_below:
+                        # TODO: conditions when no corner ceiling gets set below anyways
+                        mesh.from_object(bpy.data.objects['CORNER_BELOW'], bpy.context.scene)
                 try:
                     neighbor_tile = tile.get_tile_in_direction(corner_directions[0])
                     diag_tile = tile.get_tile_in_direction(corner_directions[1])
@@ -114,9 +121,12 @@ class BmeshFactory:
     @staticmethod
     def build_wall(tile):
         rtn = bmesh.new()
-        center = (1, -1, 0)
+        center = (TILE_WIDTH / 2, -TILE_WIDTH / 2, 0)
         corner_directions = [[BmeshFactory.W], [BmeshFactory.W, BmeshFactory.N], [BmeshFactory.N]]
         wall = TerrainType.WALL
+        tile_below = tile.get_tile_in_direction([], -1)
+        if tile_below is not None:
+            ceiling_below = True
         for d in Direction:
             corner_directions[1][1] = d
             corner_directions[2][0] = d
@@ -143,6 +153,9 @@ class BmeshFactory:
                             rtn.from_object(bpy.data.objects['FLOOR_Cen'], bpy.context.scene)
                         if add_corner:
                             rtn.from_object(bpy.data.objects['FLOOR_CORNER'], bpy.context.scene)
+                            if ceiling_below:
+                                 # TODO: conditions when no corner ceiling gets set below anyways
+                                rtn.from_object(bpy.data.objects['CORNER_BELOW'], bpy.context.scene)
                             if neighbor_tiles[0].terrain.make_edges_to:
                                 rtn.from_object(bpy.data.objects['FLOOR_Cor0'], bpy.context.scene)
                             if neighbor_tiles[2].terrain.make_edges_to:
@@ -163,6 +176,9 @@ class BmeshFactory:
                             rtn.from_object(bpy.data.objects['FLOOR_Cor2'], bpy.context.scene)
                 elif neighbor_terrains[1] != wall:
                     rtn.from_object(bpy.data.objects['WALL_OD'], bpy.context.scene)
+                    if ceiling_below:
+                         # TODO: conditions when no corner ceiling gets set below anyways
+                        rtn.from_object(bpy.data.objects['OUTER_BELOW'], bpy.context.scene)
                     if neighbor_tiles[1].terrain.make_edges_to:
                         rtn.from_object(bpy.data.objects['FLOOR_ODW'], bpy.context.scene)
             raise_floor = False
@@ -215,7 +231,8 @@ class BmeshFactory:
         for i in range(length, len(mesh.verts)):
             if mesh.verts[i].co[2] < 1:
                 raise_verts.append(mesh.verts[i])
-        bmesh.ops.translate(mesh, vec=(0, 0, 2.5), verts=raise_verts)
+        brook_height = TILE_HEIGHT - BROOK_DEPTH
+        bmesh.ops.translate(mesh, vec=(0, 0, brook_height), verts=raise_verts)
 
     # @staticmethod
     # def add_ceiling_bmesh(tile):

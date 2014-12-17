@@ -79,7 +79,6 @@ class Tile:
     def build_bmesh(self):
         return BmeshFactory.build(self)
 
-
     def get_tile_in_direction(self, directions, z=0):
         x = self.global_x
         y = self.global_y
@@ -96,34 +95,6 @@ class Tile:
             return self.map_tiles[x][y][self.global_z + z]
         except IndexError:
             return None
-
-    def build_object_id(self, prefix, directions):
-        rtn = prefix
-        for e in directions:
-            neighbor_tile = self.get_tile_in_direction(e)
-            if neighbor_tile is None:
-                if self.terrain_type().name == 'WALL':
-                    return ''
-                else:
-                    rtn += 'EM'
-            elif self.terrain_type().name == 'WALL' and neighbor_tile.terrain_type().name == 'WALL':
-                rtn += 'WA'
-            elif self.terrain_type().name == 'WALL' and neighbor_tile.terrain_type() == TerrainType.BROOK_BED:
-                return ''
-            else:
-                tile_below = self.get_tile_in_direction([], -1)
-                if neighbor_tile.terrain.has_floor or neighbor_tile.terrain_type() == TerrainType.BROOK_TOP:
-                    rtn += 'FL'
-                else:
-                    rtn += 'EM'
-        return rtn
-
-    def build_wall_bmesh(self):
-        rtn = bmesh.new()
-        self.add_directional_mesh_parts('WALL_', rtn)
-        return rtn
-
-
 
     def build_ramp_bmesh(self):
         rtn = bmesh.new()
@@ -406,42 +377,6 @@ class Tile:
         elif rt == [0, 3]:
             self.ramp_tops = [self.W, self.N]
 
-    def build_brook_bmesh(self):
-        rtn = bmesh.new()
-        rtn.from_object(bpy.data.objects['BROOK_CENTER'], bpy.context.scene)
-        self.add_brook_directions(rtn)
-        self.add_brook_corners(rtn)
-        return rtn
-
-    def add_brook_directions(self, bm):
-        identificator = 'BROOK_'
-        for d in self.Direction:
-            identificator += d.name + '_'
-            tile_dir = self.get_tile_in_direction([d])
-            if tile_dir is None or tile_dir.terrain_type() == TerrainType.BROOK_BED:
-                identificator += 'B'
-            else:
-                identificator += 'F'
-            bm.from_object(bpy.data.objects[identificator], bpy.context.scene)
-            identificator = 'BROOK_'
-
-    def add_brook_corners(self, bm):
-        identificator = 'BROOK_'
-        directions = [self.W, self.N]
-        for d in self.Direction:
-            directions[1] = d
-            identificator += d.name + '_'
-            for e in directions:
-                tile_dir = self.get_tile_in_direction([e])
-                if tile_dir is None or tile_dir.terrain_type() == TerrainType.BROOK_BED:
-                    identificator += 'B'
-                else:
-                    identificator += 'F'
-
-            bm.from_object(bpy.data.objects[identificator], bpy.context.scene)
-            identificator = 'BROOK_'
-            directions[0] = d
-
     def is_rampable(self, d):
         neighbor_t = self.get_tile_in_direction(d)
         neighbor_t_a = self.get_tile_in_direction(d, 1)
@@ -449,8 +384,6 @@ class Tile:
             return False
         else:
             return neighbor_t.terrain_type() == TerrainType.WALL and neighbor_t_a.terrain_type() != TerrainType.WALL
-
-
 
     def add_ceiling_bmesh(self, bm):
         # consider doing complex ceiling for all tiles, because walls can protrude into them

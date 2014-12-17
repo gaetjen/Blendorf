@@ -41,17 +41,10 @@ class Terrain:
     empty_terrains = [0, 12, 16]
     # list containing walls and stairs, because they behave the same
     wall_terrains = [4, 5, 7, 8, 11]
-    # list of terrains, that get terrainful set to true
-    terrainful_terrains = [1, 2, 3, 4, 5, 6, 9, 11, 13, 14, 15]
     has_ceiling = False
 
     def __init__(self, terrain_type):
         self.terrain_type = TerrainType(terrain_type)
-
-        if terrain_type in self.terrainful_terrains:
-            self.terrainful = True
-        else:
-            self.terrainful = False
 
         if terrain_type in self.floor_terrains:
             self.has_floor_center = True

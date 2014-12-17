@@ -11,10 +11,10 @@ import bpy
 import bmesh
 from mathutils import Vector
 from helpers import b2i, get_msg_length, get_length_length
-
+from helpers import BROOK_DEPTH, TILE_HEIGHT, TILE_WIDTH
 
 # filename
-f = open('../maps/brook.dfmap', "rb")
+f = open('../maps/ramps.dfmap', "rb")
 # min and max coordinates to build
 # min is inclusive, max is exclusive
 # -1 for whole map
@@ -111,19 +111,20 @@ start_time = time.time()
 print(numBlocks, "start ceilings")
 print(len(map_tiles), len(map_tiles[0]), len(map_tiles[0][0]))
 
-numBlocks = 0
 for x in range(minX, maxX):
     for y in range(minY, maxY):
         terrainful = False
+        sky_above = True
         for z in reversed(range(minZ, maxZ_global)):
             t = map_tiles[x][y][z]
-            if t is not None:
-                numBlocks += 1
-                if terrainful:
-                    t.add_ceiling()
-                    terrainful = False
-                if t.terrainful():
-                    terrainful = True
+            if sky_above:
+                if t is not None:
+                    sky_above = False
+            elif t is None:
+                terrainful = True
+            elif terrainful:
+                t.add_ceiling()
+                terrainful = False
 
 
 ceilingtime = time.time() - start_time
@@ -131,7 +132,6 @@ start_time = time.time()
 
 
 print(numBlocks, "building objects")
-no_terrain = ['RAMP_TOP', 'BROOK_TOP', 'ENDLESS_PIT']
 
 numBlocks = 0
 num_col = 0
@@ -147,7 +147,7 @@ for x in range(minX, maxX):
         for z in range(minZ, maxZ):
             t = map_tiles[x][y][z]
             if t is not None:
-                loc = Vector((t.global_x * 2, t.global_y * -2, t.global_z * 3))
+                loc = Vector((t.global_x * TILE_WIDTH, t.global_y * -TILE_WIDTH, t.global_z * TILE_HEIGHT))
                 add_bm = t.build_bmesh()
                 bmesh.ops.translate(add_bm, vec=loc, verts=add_bm.verts)
                 # create some pydata
