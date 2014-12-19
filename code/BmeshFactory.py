@@ -1,6 +1,5 @@
 __author__ = 'JoeJoe'
 
-import proto.Tile_pb2
 from Terrain import Terrain, TerrainType
 import bpy
 import bmesh
@@ -9,8 +8,11 @@ from mathutils import Matrix
 from Direction import Direction
 import random
 from helpers import BROOK_DEPTH, TILE_HEIGHT, TILE_WIDTH
+from Ramp import  Ramp
 
 
+# TODO: maybe take care of ceilings near ramps
+# TODO: maybe take care of non-manifold geometry (might resolve itself with materials?)
 class BmeshFactory:
     """A factory to build the final bmesh for the tiles
     """
@@ -44,7 +46,7 @@ class BmeshFactory:
 
         BmeshFactory.build_ceiling(rtn, tile)
 
-        # bmesh.ops.remove_doubles(rtn, verts=rtn.verts, dist=0.0001)
+        bmesh.ops.remove_doubles(rtn, verts=rtn.verts, dist=0.0001)
         bmesh.ops.dissolve_limit(rtn, angle_limit=math.pi/90, use_dissolve_boundaries=False,
                                  verts=rtn.verts, edges=rtn.edges)
         return rtn
@@ -219,8 +221,10 @@ class BmeshFactory:
 
     @staticmethod
     def build_ramp(tile):
-        # TODO: implement
+        tile.terrain.rampinfo = Ramp(tile)
         rtn = bmesh.new()
+        BmeshFactory.build_ramp_ramp(rtn, tile)
+        # BmeshFactory.build_ramp_walls(rtn, tile)
         tile_below = tile.get_tile_in_direction([], -1)
         if tile_below is not None:
             BmeshFactory.build_ceiling(rtn, tile_below)
@@ -309,3 +313,10 @@ class BmeshFactory:
             next_dir = direction.next()
             corner_directions = [[next_dir], [next_dir, next_dir.next()], [next_dir.next()]]
             BmeshFactory.add_ceiling_single_corner(mesh, tile, corner_directions, below=True, outer=True)
+
+    @staticmethod
+    def build_ramp_ramp(mesh, tile):
+        rampid = tile.terrain.rampinfo.ramptype.name
+        rotd = tile.terrain.rampinfo.rotate_direction
+        mesh.from_object(bpy.data.objects[rampid], bpy.context.scene)
+        bmesh.ops.rotate(mesh, verts=mesh.verts, cent=BmeshFactory.center, matrix=BmeshFactory.rot_dict[rotd])

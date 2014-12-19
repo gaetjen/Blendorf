@@ -30,10 +30,10 @@ class Terrain:
         terrain_type            base terrain type for the Tile
         terrainful              the next tile under this one needs a ceiling
         has_ceiling             a ceiling is above the tile
-        has_floor_center        the tile has a floor centerpiece
         extend_to               neighboring floors connect to this tile
         connect_diag            neighboring tiles can get connected diagonally through this tile
         edge_to                 adjacent floors need edges in this direction
+        rampinfo                Ramp object with more information
     """
     # list of terrains, that are just a floor, maybe with more stuff placed on it
     floor_terrains = [1, 2, 3, 6, 13, 14, 15]
@@ -47,31 +47,27 @@ class Terrain:
         self.terrain_type = TerrainType(terrain_type)
 
         if terrain_type in self.floor_terrains:
-            self.has_floor_center = True
             self.extend_to =        True
             self.connect_diag =     True
             self.make_edges_to =    False
 
         if terrain_type in self.wall_terrains:
-            self.has_floor_center = False
             self.extend_to =        True
             self.connect_diag =     True
             self.make_edges_to =    False
 
         if terrain_type == TerrainType.RAMP:
-            self.has_floor_center = False
             self.extend_to =        True
             self.connect_diag =     False
             self.make_edges_to =    False
+            self.rampinfo = None
 
         if terrain_type == TerrainType.RAMP_TOP:
-            self.has_floor_center = False
             self.extend_to =        True
             self.connect_diag =     False
             self.make_edges_to =    True
 
         if terrain_type in self.empty_terrains:
-            self.has_floor_center = False
             self.extend_to =        False
             self.connect_diag =     True
             self.make_edges_to =    True
