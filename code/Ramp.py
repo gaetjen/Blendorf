@@ -1,15 +1,20 @@
 __author__ = 'Jo'
 
-from enum import IntEnum
+from enum import Enum
 from Direction import Direction
+from Terrain import TerrainType
 
-class RampType (IntEnum):
+class RampType (Enum):
     RAMP_0 = 0
     RAMP_1 = 1
     RAMP_2 = 2
     RAMP_CORNER = 3
     RAMP_4 = 4
 
+class ConnectionType (Enum):
+    Connect = 0
+    WALL = 1
+    END = 2
 
 class Ramp:
     """contains more information about how the ramp is oriented and neighbors"""
@@ -19,8 +24,11 @@ class Ramp:
         self.ramptype = RampType.RAMP_0
         self.rotate_direction = None
         self.find_tops(tile)
+        self.left_dir = None
+        self.right_dir = None
+        self.left_connection = None
+        self.right_connection = None
         assert self.rotate_direction is not None, "rotate direction was not set!"
-
 
     def find_tops(self, tile):
         self.add_naive_tops(tile)
@@ -94,7 +102,7 @@ class Ramp:
             self.tops = rt[1:2]
             return
 
-        nrt = neighbor_tile.tops
+        nrt = neighbor_tile.terrain.rampinfo.tops
         assert len(nrt) not in [0, 4], "neighbor of 3ramp cannot have 0 or 4 tops!"
 
         if len(nrt) == 1 and isinstance(nrt[0], Direction):
@@ -104,219 +112,99 @@ class Ramp:
                 self.tops = rt[0:2]
             else:
                 self.tops = rt[1:3]
-
-        if len(nrt) == 1 and type(nrt[0]) is list:
+        elif len(nrt) == 1:
             if nrt[0][0] == rt[0]:
                 self.tops = rt[0:2]
             elif nrt[0][1] == rt[2]:
                 self.tops = rt[1:3]
             else:
                 self.tops = rt[1:2]
-
         if len(nrt) == 2:
             if rt[1] == nrt[0]:
                 self.tops = rt[0:2]
             else:
                 self.tops = rt[1:3]
-
         if len(nrt) == 3:
             # case when two 3tops are next to each other
             if rt[1] == Direction.North or rt[1] == Direction.East:
                 self.tops = rt[0:2]
             else:
                 self.tops = rt[1:3]
-    ######################################################
-    # def build_ramp_bmesh(self):
-    #     rtn = bmesh.new()
-    #     center = (1, -1, 0)
-    #     # determine number and direction of ramp tops
-    #     if not hasattr(self, 'ramp_tops'):
-    #         self.find_ramp_tops()
-    #
-    #     rt = self.ramp_tops
-    #
-    #     if len(rt) == 4:
-    #         rtn.from_object(bpy.data.objects['RAMP_4'], bpy.context.scene)
-    #         return rtn
-    #
-    #     elif len(rt) == 0:
-    #         rtn.from_object(bpy.data.objects['RAMP_0'], bpy.context.scene)
-    #         return rtn
-    #
-    #     elif len(rt) == 1:
-    #         if type(rt[0]) is Tile.Direction:
-    #             objectid = "RAMP_1"
-    #             rtn.from_object(bpy.data.objects[objectid], bpy.context.scene)
-    #             objectid += "_R"
-    #             try:
-    #                 if self.get_tile_in_direction([(rt[0]+2) % 4]).terrain_type() == TerrainType.WALL:
-    #                     rtn.from_object(bpy.data.objects['RAMP_1_FWALL'], bpy.context.scene)
-    #
-    #                 if self.get_tile_in_direction([self.Direction(rt[0]).next()]).terrain_type() == TerrainType.WALL:
-    #                     objectid += "WALL"
-    #                 elif self.get_tile_in_direction([self.Direction(rt[0]).next()]).terrain_type() == TerrainType.RAMP:
-    #                     if self.ramp_connects_right():
-    #                         objectid += "RAMP"
-    #                     else:
-    #                         objectid += "END"
-    #                 else:
-    #                     objectid += "END"
-    #             except AttributeError:
-    #                 objectid += "END"
-    #
-    #             rtn.from_object(bpy.data.objects[objectid], bpy.context.scene)
-    #
-    #             objectid = "RAMP_1_L"
-    #             try:
-    #                 if self.get_tile_in_direction([self.Direction(rt[0]).prev()]).terrain_type() == TerrainType.WALL:
-    #                     objectid += "WALL"
-    #                 elif self.get_tile_in_direction([self.Direction(rt[0]).prev()]).terrain_type() == TerrainType.RAMP:
-    #                     if self.ramp_connects_left():
-    #                         objectid += "RAMP"
-    #                     else:
-    #                         objectid += "END"
-    #                 else:
-    #                     objectid += "END"
-    #             except AttributeError:
-    #                 objectid += "END"
-    #             rtn.from_object(bpy.data.objects[objectid], bpy.context.scene)
-    #
-    #             bmesh.ops.rotate(rtn, verts=rtn.verts, cent=center, matrix=self.rot_dict[rt[0]])
-    #         else:
-    #             objectid = "RAMP_CORNER"
-    #             rtn.from_object(bpy.data.objects[objectid], bpy.context.scene)
-    #
-    #             if self.ramp_connects_right():
-    #                 objectid += "_RRAMP"
-    #             else:
-    #                 objectid += "_REND"
-    #             rtn.from_object(bpy.data.objects[objectid], bpy.context.scene)
-    #             objectid = "RAMP_CORNER"
-    #             if self.ramp_connects_left():
-    #                 objectid += "_LRAMP"
-    #             else:
-    #                 objectid += "_LEND"
-    #             rtn.from_object(bpy.data.objects[objectid], bpy.context.scene)
-    #
-    #             bmesh.ops.rotate(rtn, verts=rtn.verts, cent=center, matrix=self.rot_dict[rt[0][1]])
-    #
-    #     elif len(rt) == 2:
-    #             objectid = "RAMP_2"
-    #             rtn.from_object(bpy.data.objects[objectid], bpy.context.scene)
-    #             objectid += "_R"
-    #             dleft = self.Direction(rt[0]).prev()
-    #             dright = self.Direction(rt[1]).next()
-    #
-    #             neighbor = self.get_tile_in_direction([dright])
-    #             if not neighbor is None and neighbor.terrain_type() == TerrainType.WALL:
-    #                 objectid += "WALL"
-    #             elif not neighbor is None and neighbor.terrain_type() == TerrainType.RAMP:
-    #                 if self.ramp_connects_right():
-    #                     objectid += "RAMP"
-    #                 else:
-    #                     objectid += "END"
-    #             else:
-    #                 objectid += "END"
-    #             rtn.from_object(bpy.data.objects[objectid], bpy.context.scene)
-    #
-    #             objectid = "RAMP_2_L"
-    #             neighbor = self.get_tile_in_direction([dleft])
-    #             if not neighbor is None and neighbor.terrain_type() == TerrainType.WALL:
-    #                 objectid += "WALL"
-    #             elif not neighbor is None and neighbor.terrain_type() == TerrainType.RAMP:
-    #                 if self.ramp_connects_left():
-    #                     objectid += "RAMP"
-    #                 else:
-    #                     objectid += "END"
-    #             else:
-    #                 objectid += "END"
-    #
-    #             rtn.from_object(bpy.data.objects[objectid], bpy.context.scene)
-    #
-    #             bmesh.ops.rotate(rtn, verts=rtn.verts, cent=center, matrix=self.rot_dict[rt[1]])
-    #
-    #     return rtn
-    #
-    # def ramp_connects_left(self):
-    #     rt = self.ramp_tops
-    #     if len(rt) == 1 and type(rt[0]) is Tile.Direction:
-    #         neighbortile = self.get_tile_in_direction([self.Direction(rt[0]).prev()])
-    #         if not hasattr(neighbortile, "ramp_tops"):
-    #             neighbortile.find_ramp_tops()
-    #         nrt = neighbortile.ramp_tops
-    #         topdir = rt[0]
-    #     elif len(rt) == 1:
-    #         neighbortile = self.get_tile_in_direction([rt[0][0]])
-    #         if not hasattr(neighbortile, "ramp_tops"):
-    #             neighbortile.find_ramp_tops()
-    #         nrt = neighbortile.ramp_tops
-    #         topdir = rt[0][1]
-    #     elif len(rt) == 2:
-    #         neighbortile = self.get_tile_in_direction([self.Direction(rt[1]).prev()])
-    #         if not hasattr(neighbortile, "ramp_tops"):
-    #             neighbortile.find_ramp_tops()
-    #         nrt = neighbortile.ramp_tops
-    #         topdir = rt[0]
-    #
-    #     assert not len(nrt) in [0, 3, 4], "number of ramptops not possible!"
-    #     if len(nrt) == 2:
-    #         if topdir == nrt[1]:
-    #             return True
-    #         else:
-    #             return False
-    #     if len(nrt) == 1:
-    #         if type(nrt[0]) is Tile.Direction:
-    #             if topdir == nrt[0]:
-    #                 return True
-    #             else:
-    #                 return False
-    #         else:
-    #             if topdir == nrt[0][0]:
-    #                 return True
-    #             else:
-    #                 return False
-    #
-    # def ramp_connects_right(self):
-    #     rt = self.ramp_tops
-    #     if len(rt) == 1 and isinstance(rt[0], Tile.Direction):
-    #         neighbortile = self.get_tile_in_direction([self.Direction(rt[0]).next()])
-    #         if not hasattr(neighbortile, "ramp_tops"):
-    #             neighbortile.find_ramp_tops()
-    #         nrt = neighbortile.ramp_tops
-    #         topdir = rt[0]
-    #     elif len(rt) == 1:
-    #         neighbortile = self.get_tile_in_direction([rt[0][1]])
-    #         if not hasattr(neighbortile, "ramp_tops"):
-    #             neighbortile.find_ramp_tops()
-    #         nrt = neighbortile.ramp_tops
-    #         topdir = rt[0][0]
-    #     elif len(rt) == 2:
-    #         assert rt[0].next() == rt[1], rt
-    #         neighbortile = self.get_tile_in_direction([self.Direction(rt[1]).next()])
-    #         if not hasattr(neighbortile, "ramp_tops"):
-    #             neighbortile.find_ramp_tops()
-    #         nrt = neighbortile.ramp_tops
-    #         topdir = rt[1]
-    #
-    #     assert not len(neighbortile.ramp_tops) in [0, 3, 4], "number of neighbor ramp tops impossible"
-    #
-    #     if len(nrt) == 2:
-    #         if topdir == nrt[0]:
-    #             return True
-    #         else:
-    #             return False
-    #     if len(nrt) == 1:
-    #         if type(nrt[0]) is Tile.Direction:
-    #             if topdir == nrt[0]:
-    #                 return True
-    #             else:
-    #                 return False
-    #         else:
-    #             if topdir == nrt[0][1]:
-    #                 return True
-    #             else:
-    #                 return False
 
+    def make_connections(self, tile):
+        rt = self.tops
+        if len(rt) in [0, 4]:
+            return
+        assert len(rt) in [1, 2], "ramp tops were not removed properly!"
 
+        if len(rt) == 1 and isinstance(rt[0], Direction):
+            self.left_dir = rt[0].prev()
+            self.right_dir = rt[0].next()
+            self.find_connection(self.left_dir, tile, True)
+            self.find_connection(self.right_dir, tile, False)
+        elif len(rt) == 1:
+            self.left_dir = rt[0][0]
+            self.right_dir = rt[0][1]
+            self.find_connection(self.left_dir, tile, True)
+            self.find_connection(self.right_dir, tile, False)
+        elif len(rt) == 2:
+            self.left_dir = rt[0].prev()
+            self.right_dir = rt[1].next()
+            self.find_connection(self.left_dir, tile, True)
+            self.find_connection(self.right_dir, tile, False)
 
+    def find_connection(self, d, tile, is_left):
+        if is_left:
+            ramp_dir = d.next()
+        else:
+            ramp_dir = d.prev()
+
+        neighbor_tile = tile.get_tile_in_direction([d])
+        if neighbor_tile is None:
+            self.connect(ConnectionType.END, is_left)
+        elif neighbor_tile.terrain_type() == TerrainType.WALL:
+            self.connect(ConnectionType.WALL, is_left)
+        elif neighbor_tile.terrain_type() == TerrainType.RAMP:
+            if self.connects_ramp(neighbor_tile, ramp_dir, is_left):
+                self.connect(ConnectionType.Connect, is_left)
+            else:
+                self.connect(ConnectionType.END, is_left)
+        else:
+            self.connect(ConnectionType.END, is_left)
+
+    def connects_ramp(self, tile, dir, is_left):
+        if tile.terrain.rampinfo is None:
+            tile.terrain.rampinfo = Ramp(tile)
+        rt = tile.terrain.rampinfo.tops
+        assert len(rt) in [0, 1, 2, 4], "ramp tops were not constructed properly!"
+        if len(rt) in [0, 4]:
+            return  False
+
+        if len(rt) == 1 and isinstance(rt[0], Direction):
+            # is_left irrelevant because symmetrical
+            if rt[0] == dir:
+                return True
+            else:
+                return False
+        elif len(rt) == 1:
+            if is_left:
+                dir_ = rt[0][0]
+            else:
+                dir_ = rt[0][1]
+            if dir == dir_:
+                return True
+            else:
+                return False
+        elif len(rt) == 2:
+            # is_left should be irrelevant, because wrong 2ramp should be impossible
+            if dir in rt:
+                return True
+            else:
+                return False
+
+    def connect(self, con_type, is_left):
+        if is_left:
+            self.left_connection = con_type
+        else:
+            self.right_connection = con_type
 

@@ -18,9 +18,9 @@ f = open('../maps/ramps.dfmap', "rb")
 # min and max coordinates to build
 # min is inclusive, max is exclusive
 # -1 for whole map
-minX = 30
-maxX = 90
-minY = 30
+minX = 100
+maxX = 150
+minY = 0
 maxY = 90
 minZ = -1
 maxZ = -1

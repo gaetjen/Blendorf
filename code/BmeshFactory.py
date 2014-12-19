@@ -8,7 +8,7 @@ from mathutils import Matrix
 from Direction import Direction
 import random
 from helpers import BROOK_DEPTH, TILE_HEIGHT, TILE_WIDTH
-from Ramp import  Ramp
+from Ramp import Ramp, ConnectionType
 
 
 # TODO: maybe take care of ceilings near ramps
@@ -221,11 +221,13 @@ class BmeshFactory:
 
     @staticmethod
     def build_ramp(tile):
-        tile.terrain.rampinfo = Ramp(tile)
+        if tile.terrain.rampinfo is None:
+            tile.terrain.rampinfo = Ramp(tile)
+        tile.terrain.rampinfo.make_connections(tile)
         rtn = bmesh.new()
         BmeshFactory.build_ramp_ramp(rtn, tile)
         BmeshFactory.build_ramp_edges(rtn, tile)
-        # BmeshFactory.build_ramp_walls(rtn, tile)
+        BmeshFactory.build_ramp_walls(rtn, tile)
         tile_below = tile.get_tile_in_direction([], -1)
         if tile_below is not None:
             BmeshFactory.build_ceiling(rtn, tile_below)
@@ -330,4 +332,21 @@ class BmeshFactory:
             if t is not None:
                 if t.terrain.make_edges_to:
                     mesh.from_object(bpy.data.objects['RAMP_EDGE'], bpy.context.scene)
+            bmesh.ops.rotate(mesh, verts=mesh.verts[l:len(mesh.verts)], cent=BmeshFactory.center, matrix=BmeshFactory.rot_dict[d])
+
+    @staticmethod
+    def build_ramp_walls(mesh, tile):
+        rinfo = tile.terrain.rampinfo
+        if rinfo.left_dir is not None:
+            objid = 'RAMP_L'
+            BmeshFactory.build_ramp_wall(mesh, objid, rinfo.left_dir, rinfo.left_connection)
+            objid = 'RAMP_R'
+            BmeshFactory.build_ramp_wall(mesh, objid, rinfo.right_dir, rinfo.right_connection)
+
+    @staticmethod
+    def build_ramp_wall(mesh, objid, d, con):
+        if con != ConnectionType.Connect:
+            l = len(mesh.verts)
+            objid += con.name
+            mesh.from_object(bpy.data.objects[objid], bpy.context.scene)
             bmesh.ops.rotate(mesh, verts=mesh.verts[l:len(mesh.verts)], cent=BmeshFactory.center, matrix=BmeshFactory.rot_dict[d])
