@@ -224,6 +224,7 @@ class BmeshFactory:
         tile.terrain.rampinfo = Ramp(tile)
         rtn = bmesh.new()
         BmeshFactory.build_ramp_ramp(rtn, tile)
+        BmeshFactory.build_ramp_edges(rtn, tile)
         # BmeshFactory.build_ramp_walls(rtn, tile)
         tile_below = tile.get_tile_in_direction([], -1)
         if tile_below is not None:
@@ -320,3 +321,13 @@ class BmeshFactory:
         rotd = tile.terrain.rampinfo.rotate_direction
         mesh.from_object(bpy.data.objects[rampid], bpy.context.scene)
         bmesh.ops.rotate(mesh, verts=mesh.verts, cent=BmeshFactory.center, matrix=BmeshFactory.rot_dict[rotd])
+
+    @staticmethod
+    def build_ramp_edges(mesh, tile):
+        for d in Direction:
+            t = tile.get_tile_in_direction([d])
+            l = len(mesh.verts)
+            if t is not None:
+                if t.terrain.make_edges_to:
+                    mesh.from_object(bpy.data.objects['RAMP_EDGE'], bpy.context.scene)
+            bmesh.ops.rotate(mesh, verts=mesh.verts[l:len(mesh.verts)], cent=BmeshFactory.center, matrix=BmeshFactory.rot_dict[d])
