@@ -13,6 +13,8 @@ from Ramp import Ramp, ConnectionType
 
 # TODO: maybe take care of ceilings near ramps
 # TODO: maybe take care of non-manifold geometry (might resolve itself with materials?)
+# TODO: maybe take care of wall ramp endings
+# TODO: look at walls near corner ramps
 class BmeshFactory:
     """A factory to build the final bmesh for the tiles
     """
@@ -34,7 +36,7 @@ class BmeshFactory:
         elif tile.terrain_type() in Terrain.empty_terrains:
             BmeshFactory.add_floor_corners(rtn, tile)
         elif tile.terrain_type() == TerrainType.WALL:
-            rtn = BmeshFactory.build_wall(tile)
+            BmeshFactory.build_wall(tile, rtn)
         elif tile.terrain_type() == TerrainType.FORTIFICATION:
             rtn = BmeshFactory.build_fortification(tile)
         elif tile.terrain_type() == TerrainType.STAIR_DOWN or tile.terrain_type() == TerrainType.STAIR_UPDOWN:
@@ -125,8 +127,7 @@ class BmeshFactory:
     # I was told in Software Engineering a function should be no longer than 7 lines,
     # so here's a function that's ten times as long
     @staticmethod
-    def build_wall(tile):
-        rtn = bmesh.new()
+    def build_wall(tile, rtn):
         corner_directions = [[BmeshFactory.W], [BmeshFactory.W, BmeshFactory.N], [BmeshFactory.N]]
         wall = TerrainType.WALL
         tile_below = tile.get_tile_in_direction([], -1)
@@ -141,50 +142,57 @@ class BmeshFactory:
             neighbor_terrains = [None, None, None]
             add_corner = False
             corner_below = True
+            ramp_wall_corner_direction = d
             for e in range(3):
-                neighbor_tiles[e] = tile.get_tile_in_direction(corner_directions[e])
+                neighbor_tile = tile.get_tile_in_direction(corner_directions[e])
+                neighbor_tiles[e] = neighbor_tile
+                ramp_wall_corner_direction = ramp_wall_corner_direction.next()
                 try:
-                    neighbor_terrains[e] = neighbor_tiles[e].terrain_type()
+                    neighbor_terrains[e] = neighbor_tile.terrain_type()
+                    if neighbor_terrains[e] == TerrainType.RAMP:
+                        if neighbor_tile.terrain.rampinfo is None:
+                            neighbor_tile.terrain.rampinfo = Ramp(neighbor_tiles[e])
+                        if neighbor_tile.terrain.rampinfo.treat_ramp_as_wall_for_direction(ramp_wall_corner_direction):
+                            neighbor_terrains[e] = wall
                 except AttributeError:
-                    neighbor_terrains[e] = TerrainType.WALL
+                    neighbor_terrains[e] = wall
                 if neighbor_tiles[e] is not None:
                     if neighbor_tiles[e].terrain.extend_to:
                         add_corner = True
-            if TerrainType.RAMP not in neighbor_terrains:
-                if neighbor_terrains[0] != wall:
-                    rtn.from_object(bpy.data.objects['WALL_Cen1'], bpy.context.scene)
-                    if neighbor_terrains[2] != wall:
-                        rtn.from_object(bpy.data.objects['WALL_ID'], bpy.context.scene)
-                        rtn.from_object(bpy.data.objects['WALL_Cen2'], bpy.context.scene)
-                        if neighbor_tiles[2].terrain.make_edges_to:
-                            rtn.from_object(bpy.data.objects['FLOOR_Cen'], bpy.context.scene)
-                        if add_corner:
-                            rtn.from_object(bpy.data.objects['FLOOR_CORNER'], bpy.context.scene)
-                            if neighbor_tiles[0].terrain.make_edges_to:
-                                rtn.from_object(bpy.data.objects['FLOOR_Cor0'], bpy.context.scene)
-                            if neighbor_tiles[2].terrain.make_edges_to:
-                                rtn.from_object(bpy.data.objects['FLOOR_Cor2'], bpy.context.scene)
-                        else:
-                            rtn.from_object(bpy.data.objects['FLOOR_ID'], bpy.context.scene)
-                            corner_below = False
-                    elif neighbor_terrains[1] != wall:
-                        rtn.from_object(bpy.data.objects['WALL_Cor1'], bpy.context.scene)
-                        if neighbor_tiles[0].terrain.make_edges_to:
-                            rtn.from_object(bpy.data.objects['FLOOR_Cor0'], bpy.context.scene)
-                elif neighbor_terrains[2] != wall:
+            if neighbor_terrains[0] != wall:
+                rtn.from_object(bpy.data.objects['WALL_Cen1'], bpy.context.scene)
+                if neighbor_terrains[2] != wall:
+                    rtn.from_object(bpy.data.objects['WALL_ID'], bpy.context.scene)
                     rtn.from_object(bpy.data.objects['WALL_Cen2'], bpy.context.scene)
                     if neighbor_tiles[2].terrain.make_edges_to:
                         rtn.from_object(bpy.data.objects['FLOOR_Cen'], bpy.context.scene)
-                    if neighbor_terrains[1] != wall:
-                        rtn.from_object(bpy.data.objects['WALL_Cor2'], bpy.context.scene)
+                    if add_corner:
+                        rtn.from_object(bpy.data.objects['FLOOR_CORNER'], bpy.context.scene)
+                        if neighbor_tiles[0].terrain.make_edges_to:
+                            rtn.from_object(bpy.data.objects['FLOOR_Cor0'], bpy.context.scene)
                         if neighbor_tiles[2].terrain.make_edges_to:
                             rtn.from_object(bpy.data.objects['FLOOR_Cor2'], bpy.context.scene)
+                    else:
+                        rtn.from_object(bpy.data.objects['FLOOR_ID'], bpy.context.scene)
+                        corner_below = False
                 elif neighbor_terrains[1] != wall:
-                    rtn.from_object(bpy.data.objects['WALL_OD'], bpy.context.scene)
-                    if ceiling_below:
-                        BmeshFactory.add_outer_below(rtn, tile_below.get_tile_in_direction(corner_directions[1]), d)
-                    if neighbor_tiles[1].terrain.make_edges_to:
-                        rtn.from_object(bpy.data.objects['FLOOR_ODW'], bpy.context.scene)
+                    rtn.from_object(bpy.data.objects['WALL_Cor1'], bpy.context.scene)
+                    if neighbor_tiles[0].terrain.make_edges_to:
+                        rtn.from_object(bpy.data.objects['FLOOR_Cor0'], bpy.context.scene)
+            elif neighbor_terrains[2] != wall:
+                rtn.from_object(bpy.data.objects['WALL_Cen2'], bpy.context.scene)
+                if neighbor_tiles[2].terrain.make_edges_to:
+                    rtn.from_object(bpy.data.objects['FLOOR_Cen'], bpy.context.scene)
+                if neighbor_terrains[1] != wall:
+                    rtn.from_object(bpy.data.objects['WALL_Cor2'], bpy.context.scene)
+                    if neighbor_tiles[2].terrain.make_edges_to:
+                        rtn.from_object(bpy.data.objects['FLOOR_Cor2'], bpy.context.scene)
+            elif neighbor_terrains[1] != wall:
+                rtn.from_object(bpy.data.objects['WALL_OD'], bpy.context.scene)
+                if ceiling_below:
+                    BmeshFactory.add_outer_below(rtn, tile_below.get_tile_in_direction(corner_directions[1]), d)
+                if neighbor_tiles[1].terrain.make_edges_to:
+                    rtn.from_object(bpy.data.objects['FLOOR_ODW'], bpy.context.scene)
             if ceiling_below and corner_below:
                 BmeshFactory.add_ceiling_single_corner(rtn, tile_below, corner_directions, True)
 
@@ -229,7 +237,9 @@ class BmeshFactory:
         BmeshFactory.build_ramp_edges(rtn, tile)
         BmeshFactory.build_ramp_walls(rtn, tile)
         tile_below = tile.get_tile_in_direction([], -1)
-        if tile_below is not None:
+        if len(tile.terrain.rampinfo.tops) == 4:
+            BmeshFactory.build_wall(tile, rtn)
+        elif tile_below is not None:
             BmeshFactory.build_ceiling(rtn, tile_below)
         return rtn
 

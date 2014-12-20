@@ -208,3 +208,27 @@ class Ramp:
         else:
             self.right_connection = con_type
 
+    def treat_ramp_as_wall_for_direction(self, d):
+        # corner direction is always one to the left
+        # so nw = n, ne = e, se = s, sw = w
+        assert len(self.tops) in [0, 1, 2, 4], "ramp tops were not constructed properly, wrong length!"
+        if len(self.tops) == 0:
+            return False
+        elif len(self.tops) == 4:
+            return True
+        elif len(self.tops) == 1 and isinstance(self.tops[0], Direction):
+            if d == self.tops[0] or d == self.tops[0].next():
+                return True
+            else:
+                return False
+        elif len(self.tops) == 1:
+            if d == self.tops[0][1]:
+                return True
+            else:
+                return False
+        elif len(self.tops) == 2:
+            if self.tops[0].prev() == d:
+                return False
+            else:
+                return True
+
