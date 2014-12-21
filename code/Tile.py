@@ -20,7 +20,6 @@ class Tile:
         global_z        z coordinate in the map
         material        string identifying the terrain material
         terrain         Terrain object containing more detailed terrain information
-        mesh_dict       dictionary for access to bmeshes of different terrain types
         ramp_tops       list containing the directions in which the ramp goes
     Attribute-like functions:
         liquid_type()   water or magma
@@ -35,27 +34,25 @@ class Tile:
     W = Direction.West
 
     def __init__(self, proto_tile=None, block=None, mat_library=None):
-        # obj_meshes = ['BOULDER', 'BROOK_BED', 'RAMP', 'SAPLING', 'SHRUB',
-        #               'STAIR_DOWN', 'STAIR_UP', 'STAIR_UPDOWN', 'TREE']
-        #
-        # mesh_dict = {s: bmesh.new() for s in obj_meshes}
-        # for k in mesh_dict:
-        #     mesh_dict[k].from_object(bpy.data.objects[k], bpy.context.scene)
 
         if not (proto_tile is None or block is None or mat_library is None):
             self.proto_tile = proto_tile
             self.global_x = block.x * 16 + proto_tile.x
             self.global_y = block.y * 16 + proto_tile.y
             self.global_z = block.z
-            typeindex = getattr(self.proto_tile, 'material_type', None)
-            matindex = getattr(self.proto_tile, 'material_index', None)
-            if typeindex is None or matindex is None:
+            typeindex = getattr(self.proto_tile, 'material_type', -1)
+            matindex = getattr(self.proto_tile, 'material_index', -1)
+            # right now this is hacked manually by editing the Tile_pb2.py.
+            # In the future this should be integrated also in the Tile.proto
+            if typeindex == -1 or matindex == -1:
                 self.material = proto.Tile_pb2.Tile.TileMaterialType.Name(self.proto_tile.tile_material)
             else:
                 try:
                     self.material = mat_library[typeindex][matindex]
                 except IndexError:
                     self.material = 'unknown'
+            print(self.material)
+            input("cont")
             self.terrain = Terrain(proto_tile.type)
 
     def liquid_type(self):

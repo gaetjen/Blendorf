@@ -14,13 +14,13 @@ from helpers import b2i, get_msg_length, get_length_length
 from helpers import BROOK_DEPTH, TILE_HEIGHT, TILE_WIDTH
 
 # filename
-f = open('../maps/ramps.dfmap', "rb")
+f = open('../maps/brook.dfmap', "rb")
 # min and max coordinates to build
 # min is inclusive, max is exclusive
 # -1 for whole map
-minX = 100
-maxX = 150
-minY = 0
+minX = 30
+maxX = 90
+minY = 30
 maxY = 90
 minZ = -1
 maxZ = -1
@@ -54,6 +54,8 @@ for m in mapData.inorganic_material:
     material_lib[0].append(m.name)
 for m in mapData.organic_material:
     material_lib[1].append(m.name)
+print(material_lib)
+input("cont")
 
 # determine min and max stuff
 minX = max(1, minX)
@@ -147,6 +149,8 @@ for x in range(minX, maxX):
         for z in range(minZ, maxZ):
             t = map_tiles[x][y][z]
             if t is not None:
+                print(t.material)
+                input("cont?")
                 loc = Vector((t.global_x * TILE_WIDTH, t.global_y * -TILE_WIDTH, t.global_z * TILE_HEIGHT))
                 add_bm = t.build_bmesh()
                 bmesh.ops.translate(add_bm, vec=loc, verts=add_bm.verts)

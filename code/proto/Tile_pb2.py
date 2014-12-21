@@ -278,14 +278,14 @@ _TILE = _descriptor.Descriptor(
     _descriptor.FieldDescriptor(
       name='material_index', full_name='dfproto.Tile.material_index', index=4,
       number=5, type=13, cpp_type=3, label=1,
-      has_default_value=False, default_value=0,
+      has_default_value=False, default_value=-1,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
       name='material_type', full_name='dfproto.Tile.material_type', index=5,
       number=6, type=13, cpp_type=3, label=1,
-      has_default_value=False, default_value=0,
+      has_default_value=False, default_value=-1,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
