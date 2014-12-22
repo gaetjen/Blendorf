@@ -14,13 +14,13 @@ from helpers import b2i, get_msg_length, get_length_length
 from helpers import BROOK_DEPTH, TILE_HEIGHT, TILE_WIDTH
 
 # filename
-f = open('../maps/brook.dfmap', "rb")
+f = open('../maps/ramps.dfmap', "rb")
 # min and max coordinates to build
 # min is inclusive, max is exclusive
 # -1 for whole map
-minX = 30
+minX = 60
 maxX = 90
-minY = 30
+minY = 60
 maxY = 90
 minZ = -1
 maxZ = -1
@@ -54,8 +54,6 @@ for m in mapData.inorganic_material:
     material_lib[0].append(m.name)
 for m in mapData.organic_material:
     material_lib[1].append(m.name)
-print(material_lib)
-input("cont")
 
 # determine min and max stuff
 minX = max(1, minX)
@@ -141,7 +139,7 @@ filename = bpy.data.filepath
 
 all_v = []
 all_f = []
-
+grassy_faces = []
 for x in range(minX, maxX):
     for y in range(minY, maxY):
         numBlocks += 1
@@ -149,15 +147,17 @@ for x in range(minX, maxX):
         for z in range(minZ, maxZ):
             t = map_tiles[x][y][z]
             if t is not None:
-                print(t.material)
-                input("cont?")
                 loc = Vector((t.global_x * TILE_WIDTH, t.global_y * -TILE_WIDTH, t.global_z * TILE_HEIGHT))
                 add_bm = t.build_bmesh()
                 bmesh.ops.translate(add_bm, vec=loc, verts=add_bm.verts)
+
                 # create some pydata
                 vertindex_offset = len(all_v)
+                f_start = len(all_f)
                 all_v.extend(v.co[:] for v in add_bm.verts)
                 all_f.extend([[v.index + vertindex_offset for v in f.verts] for f in add_bm.faces])
+                if t.material == 'GRASS_DARK':
+                    grassy_faces.extend(i for i in range(f_start, len(all_f)))
 
 me = bpy.data.meshes.new("landscape")
 me.from_pydata(all_v, [], all_f)
@@ -172,11 +172,21 @@ start_time = time.time()
 print("finalizing objects and cleaning up geometry")
 bpy.context.scene.objects.active = bpy.data.objects["Land"]
 bpy.ops.object.select_pattern(pattern="Land*")
-bpy.ops.object.mode_set(mode='EDIT')
-bpy.ops.mesh.select_all(action='SELECT')
-bpy.ops.mesh.remove_doubles()
-bpy.ops.object.mode_set(mode='OBJECT')
-bpy.ops.wm.save_mainfile(filepath=filename)
+bpy.data.objects["Land"].data.materials.append(bpy.data.materials[1])
+bpy.data.objects["Land"].data.materials.append(bpy.data.materials[0])
+# bpy.ops.object.mode_set(mode='EDIT')
+# bpy.ops.mesh.select_all(action='SELECT')
+# bpy.ops.mesh.remove_doubles()
+# bpy.ops.mesh.select_all(action='DESELECT')
+# bpy.ops.object.mode_set(mode='OBJECT')
+for f in range(len(bpy.data.objects["Land"].data.polygons)):
+    if f not in grassy_faces:
+        bpy.data.objects["Land"].data.polygons[f].material_index = 1
+    # else:
+    #     bpy.data.objects["Land"].data.polygons[f].material_index = 0
+print(grassy_faces)
+# bpy.ops.object.mode_set(mode='EDIT')
+# bpy.ops.wm.save_mainfile(filepath=filename)
 
 
 jointime = time.time()-start_time

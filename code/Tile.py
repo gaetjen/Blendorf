@@ -51,8 +51,6 @@ class Tile:
                     self.material = mat_library[typeindex][matindex]
                 except IndexError:
                     self.material = 'unknown'
-            print(self.material)
-            input("cont")
             self.terrain = Terrain(proto_tile.type)
 
     def liquid_type(self):
