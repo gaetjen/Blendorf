@@ -18,10 +18,10 @@ f = open('../maps/ramps.dfmap', "rb")
 # min and max coordinates to build
 # min is inclusive, max is exclusive
 # -1 for whole map
-minX = 60
-maxX = 90
-minY = 60
-maxY = 90
+minX = -1
+maxX = -1
+minY = -1
+maxY = -1
 minZ = -1
 maxZ = -1
 
@@ -181,12 +181,18 @@ terrain = bpy.data.objects["Land"]
 for m in bpy.data.materials:
     terrain.data.materials.append(m)
 
-# print(material_face_dict.keys())
+print(material_face_dict.keys())
 # input("cont")
 # for loop where the faces get the proper material indices (loop over object materials)
-for i, facetuple in enumerate(material_face_dict.items()):
-    for f in facetuple[1]:
-        terrain.data.polygons[f].material_index = i
+# TODO: differentiate terrain and props (wait for 0.40.xx maps?)
+for i, mat in enumerate(terrain.data.materials):
+    matname = mat.name
+    try:
+        faces = material_face_dict[matname]
+        for f in faces:
+            terrain.data.polygons[f].material_index = i
+    except KeyError:
+        print(matname, "was not found")
 
 bpy.ops.object.mode_set(mode='EDIT')
 bpy.ops.mesh.select_all(action='SELECT')
