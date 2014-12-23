@@ -139,7 +139,7 @@ filename = bpy.data.filepath
 
 all_v = []
 all_f = []
-grassy_faces = []
+material_face_dict = {}
 for x in range(minX, maxX):
     for y in range(minY, maxY):
         numBlocks += 1
@@ -156,8 +156,11 @@ for x in range(minX, maxX):
                 f_start = len(all_f)
                 all_v.extend(v.co[:] for v in add_bm.verts)
                 all_f.extend([[v.index + vertindex_offset for v in f.verts] for f in add_bm.faces])
-                if t.material == 'GRASS_DARK':
-                    grassy_faces.extend(i for i in range(f_start, len(all_f)))
+                try:
+                    material_face_dict[t.material].extend(i for i in range(f_start, len(all_f)))
+                except KeyError:
+                    material_face_dict[t.material] = []
+                    material_face_dict[t.material].extend(i for i in range(f_start, len(all_f)))
 
 me = bpy.data.meshes.new("landscape")
 me.from_pydata(all_v, [], all_f)
@@ -172,20 +175,23 @@ start_time = time.time()
 print("finalizing objects and cleaning up geometry")
 bpy.context.scene.objects.active = bpy.data.objects["Land"]
 bpy.ops.object.select_pattern(pattern="Land*")
-bpy.data.objects["Land"].data.materials.append(bpy.data.materials[1])
-bpy.data.objects["Land"].data.materials.append(bpy.data.materials[0])
-# bpy.ops.object.mode_set(mode='EDIT')
-# bpy.ops.mesh.select_all(action='SELECT')
-# bpy.ops.mesh.remove_doubles()
-# bpy.ops.mesh.select_all(action='DESELECT')
-# bpy.ops.object.mode_set(mode='OBJECT')
-for f in range(len(bpy.data.objects["Land"].data.polygons)):
-    if f not in grassy_faces:
-        bpy.data.objects["Land"].data.polygons[f].material_index = 1
-    # else:
-    #     bpy.data.objects["Land"].data.polygons[f].material_index = 0
-print(grassy_faces)
-# bpy.ops.object.mode_set(mode='EDIT')
+terrain = bpy.data.objects["Land"]
+
+# for loop where all materials are appended to the terrain
+for m in bpy.data.materials:
+    terrain.data.materials.append(m)
+
+# print(material_face_dict.keys())
+# input("cont")
+# for loop where the faces get the proper material indices (loop over object materials)
+for i, facetuple in enumerate(material_face_dict.items()):
+    for f in facetuple[1]:
+        terrain.data.polygons[f].material_index = i
+
+bpy.ops.object.mode_set(mode='EDIT')
+bpy.ops.mesh.select_all(action='SELECT')
+bpy.ops.mesh.remove_doubles()
+bpy.ops.object.mode_set(mode='OBJECT')
 # bpy.ops.wm.save_mainfile(filepath=filename)
 
 

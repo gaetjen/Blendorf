@@ -12,7 +12,8 @@ from Ramp import Ramp, ConnectionType
 
 
 # TODO: maybe take care of ceilings near ramps
-# TODO: maybe take care of non-manifold geometry (might resolve itself with materials?)
+# TODO: maybe take care of non-manifold geometry (might resolve itself with materials?
+#       could remove doulbes after material application)
 # TODO: maybe take care of wall ramp endings
 # TODO: look at walls near corner ramps
 class BmeshFactory:
