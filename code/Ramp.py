@@ -24,6 +24,7 @@ class Ramp:
         self.ramptype = RampType.RAMP_0
         self.rotate_direction = None
         self.find_tops(tile)
+        self.connections_made = False
         self.left_dir = None
         self.right_dir = None
         self.left_connection = None
@@ -136,7 +137,6 @@ class Ramp:
         if len(rt) in [0, 4]:
             return
         assert len(rt) in [1, 2], "ramp tops were not removed properly!"
-
         if len(rt) == 1 and isinstance(rt[0], Direction):
             self.left_dir = rt[0].prev()
             self.right_dir = rt[0].next()
@@ -152,6 +152,7 @@ class Ramp:
             self.right_dir = rt[1].next()
             self.find_connection(self.left_dir, tile, True)
             self.find_connection(self.right_dir, tile, False)
+        self.connections_made = True
 
     def find_connection(self, d, tile, is_left):
         if is_left:
@@ -208,27 +209,30 @@ class Ramp:
         else:
             self.right_connection = con_type
 
-    def treat_ramp_as_wall_for_direction(self, d):
+    def terraintype_for_direction(self, d):
         # corner direction is always one to the left
         # so nw = n, ne = e, se = s, sw = w
-        assert len(self.tops) in [0, 1, 2, 4], "ramp tops were not constructed properly, wrong length!"
-        if len(self.tops) == 0:
-            return False
-        elif len(self.tops) == 4:
-            return True
+        # d is then the direction for which it is to consider as what this part of the ramp is to be treated
+        # returns 0 for definite floor, 1 for definite wall and 2 for further inspection
+        assert len(self.tops) in [1, 2, 4], "ramp tops were not constructed properly, wrong length!"
+        assert len(self.tops) != 0, "ramp_as_wall was called for free ramp!"
+        if len(self.tops) == 4:
+            return TerrainType.WALL
         elif len(self.tops) == 1 and isinstance(self.tops[0], Direction):
-            if d == self.tops[0] or d == self.tops[0].next():
-                return True
-            else:
-                return False
+            return TerrainType.RAMP
         elif len(self.tops) == 1:
             if d == self.tops[0][1]:
-                return True
+                left_con = self.left_connection
+                right_con = self.right_connection
+                if left_con == ConnectionType.END or right_con == ConnectionType.END:
+                    return TerrainType.FLOOR
+                else:
+                    return TerrainType.WALL
             else:
-                return False
+                return TerrainType.FLOOR
         elif len(self.tops) == 2:
-            if self.tops[0].prev() == d:
-                return False
+            if self.tops[1] == d:
+                return TerrainType.WALL
             else:
-                return True
+                return TerrainType.RAMP
 

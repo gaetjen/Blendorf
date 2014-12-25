@@ -153,14 +153,19 @@ class BmeshFactory:
                     if neighbor_terrains[e] == TerrainType.RAMP:
                         if neighbor_tile.terrain.rampinfo is None:
                             neighbor_tile.terrain.rampinfo = Ramp(neighbor_tiles[e])
-                        if neighbor_tile.terrain.rampinfo.treat_ramp_as_wall_for_direction(ramp_wall_corner_direction):
-                            neighbor_terrains[e] = wall
+                        if not tile.terrain.rampinfo.connections_made:
+                            tile.terrain.rampinfo.make_connections(tile)
+                        neighbor_terrains[e] = neighbor_tile.terrain.rampinfo.terraintype_for_direction(
+                            ramp_wall_corner_direction)
                 except AttributeError:
                     neighbor_terrains[e] = wall
                 if neighbor_tiles[e] is not None:
                     if neighbor_tiles[e].terrain.extend_to:
                         add_corner = True
-            if neighbor_terrains[0] != wall:
+            if TerrainType.RAMP in neighbor_terrains:
+                # TODO: implement
+                pass
+            elif neighbor_terrains[0] != wall:
                 rtn.from_object(bpy.data.objects['WALL_Cen1'], bpy.context.scene)
                 if neighbor_terrains[2] != wall:
                     rtn.from_object(bpy.data.objects['WALL_ID'], bpy.context.scene)
@@ -232,7 +237,8 @@ class BmeshFactory:
     def build_ramp(tile):
         if tile.terrain.rampinfo is None:
             tile.terrain.rampinfo = Ramp(tile)
-        tile.terrain.rampinfo.make_connections(tile)
+        if not tile.terrain.rampinfo.connections_made:
+            tile.terrain.rampinfo.make_connections(tile)
         rtn = bmesh.new()
         BmeshFactory.build_ramp_ramp(rtn, tile)
         BmeshFactory.build_ramp_edges(rtn, tile)
