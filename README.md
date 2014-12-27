@@ -32,7 +32,7 @@ Installed programs:
 * Google protobuf for Python 3 https://pypi.python.org/packages/source/p/protobuf-py3/protobuf-py3-2.5.1-pre.tar.gz
 	
 Procedure:
-- open the template_oct_tests.blend file directly from the code folder (not from inside Blender)
+- open the template_oct.blend file directly from the code folder (not from inside Blender)
 - in the info panel go to Window > Toggle System Console
 - in the Text Editor panel go to Text > Run Script (Alt + P)
 	
