@@ -14,7 +14,7 @@ from helpers import b2i, get_msg_length, get_length_length
 from helpers import BROOK_DEPTH, TILE_HEIGHT, TILE_WIDTH
 
 # filename
-f = open('../maps/ramps.dfmap', "rb")
+f = open('../maps/brook.dfmap', "rb")
 # min and max coordinates to build
 # min is inclusive, max is exclusive
 # -1 for whole map
@@ -192,7 +192,8 @@ for i, mat in enumerate(terrain.data.materials):
         for f in faces:
             terrain.data.polygons[f].material_index = i
     except KeyError:
-        print(matname, "was not found")
+        pass
+        # print(matname, "was not found")
 
 bpy.ops.object.mode_set(mode='EDIT')
 bpy.ops.mesh.select_all(action='SELECT')
