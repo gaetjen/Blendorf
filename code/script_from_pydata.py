@@ -14,7 +14,7 @@ from helpers import b2i, get_msg_length, get_length_length
 from helpers import BROOK_DEPTH, TILE_HEIGHT, TILE_WIDTH
 
 # filename
-f = open('../maps/brook.dfmap', "rb")
+f = open('../maps/stairs_forts.dfmap', "rb")
 # min and max coordinates to build
 # min is inclusive, max is exclusive
 # -1 for whole map

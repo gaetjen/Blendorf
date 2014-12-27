@@ -122,7 +122,6 @@ class BmeshFactory:
                     print("unexpected None Type Attribute Error")
             elif tile.terrain.extend_to:
                 mesh.from_object(bpy.data.objects['FLOOR_ID'], bpy.context.scene)
-
             bmesh.ops.rotate(mesh, verts=mesh.verts[l:len(mesh.verts)], cent=BmeshFactory.center, matrix=BmeshFactory.rot_dict[d])
             corner_directions[0][0] = d
             corner_directions[1][0] = d
@@ -200,8 +199,8 @@ class BmeshFactory:
                 rtn.from_object(bpy.data.objects['WALL_OD'], bpy.context.scene)
                 if ceiling_below:
                     BmeshFactory.add_outer_below(rtn, tile_below.get_tile_in_direction(corner_directions[1]), d)
-                if neighbor_tiles[1].terrain.make_edges_to:
-                    rtn.from_object(bpy.data.objects['FLOOR_ODW'], bpy.context.scene)
+                # if neighbor_tiles[1].terrain.make_edges_to:
+                #     rtn.from_object(bpy.data.objects['FLOOR_ODW'], bpy.context.scene)
             if ceiling_below and corner_below:
                 BmeshFactory.add_ceiling_single_corner(rtn, tile_below, corner_directions, True)
 

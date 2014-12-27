@@ -219,8 +219,8 @@ class Ramp:
         # 1, 2 and 3: d = w
         # 1: from_d = e, 2: from_d = [n, e], 3: from_d = n
         # returns 0 for definite floor, 1 for definite wall and 2 for further inspection
-        assert len(self.tops) in [1, 2, 4], "ramp tops were not constructed properly, wrong length!"
-        assert len(self.tops) != 0, "ramp_as_wall was called for free ramp!"
+        assert len(self.tops) in [0, 1, 2, 4], "ramp tops were not constructed properly, wrong length!"
+        # assert len(self.tops) != 0, "ramp_as_wall was called for free ramp!"
         if len(from_d) == 1:
             from_d = from_d[0]
         if len(self.tops) == 4:
