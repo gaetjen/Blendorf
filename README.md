@@ -5,10 +5,10 @@
 Blendorf aims to be a highly customisable 3D visualiser for exported Dwarf Fortress maps.
 
 The following features sets it apart from other visualisers:
-	- easy customisability of the art assets
-	- easily edit the generated map
-	- make raytraced renders of your fortress
-	- terrain that makes sense in the context of the game
+- easy customisability of the art assets
+- easily edit the generated map
+- make raytraced renders of your fortress
+- terrain that makes sense in the context of the game
 	
 It is supposed to enable the user to explore and show off his/her fortress and create art based on the game.
 The customisability of the terrain itself will be rather limited but textures and models for shrubs, animals etc. can be changed easily.
