@@ -209,17 +209,32 @@ class Ramp:
         else:
             self.right_connection = con_type
 
-    def terraintype_for_direction(self, d):
+    def terraintype_for_direction(self, d, from_d):
         # corner direction is always one to the left
         # so nw = n, ne = e, se = s, sw = w
-        # d is then the direction for which it is to consider as what this part of the ramp is to be treated
+        # d: the direction for which to consider as what this corner of the ramp is to be treated
+        # from_d: the entering direction into the ramp tile
+        # ex: 1R    1, 2 and 3 call terraintype_for_direction for the southwest corner
+        #     23
+        # 1, 2 and 3: d = w
+        # 1: from_d = e, 2: from_d = [n, e], 3: from_d = n
         # returns 0 for definite floor, 1 for definite wall and 2 for further inspection
         assert len(self.tops) in [1, 2, 4], "ramp tops were not constructed properly, wrong length!"
         assert len(self.tops) != 0, "ramp_as_wall was called for free ramp!"
+        if len(from_d) == 1:
+            from_d = from_d[0]
         if len(self.tops) == 4:
             return TerrainType.WALL
         elif len(self.tops) == 1 and isinstance(self.tops[0], Direction):
-            return TerrainType.RAMP
+            if not isinstance(from_d, Direction):
+                if self.tops[0] in from_d:
+                    return TerrainType.FLOOR
+                else:
+                    return TerrainType.RAMP
+            elif from_d == self.tops[0]:
+                return TerrainType.FLOOR
+            else:
+                return TerrainType.RAMP
         elif len(self.tops) == 1:
             if d == self.tops[0][1]:
                 left_con = self.left_connection

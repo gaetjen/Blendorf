@@ -110,11 +110,13 @@ class BmeshFactory:
                     neighbor_tile = tile.get_tile_in_direction(corner_directions[0])
                     diag_tile = tile.get_tile_in_direction(corner_directions[1])
                     if neighbor_tile is None or neighbor_tile.terrain.make_edges_to:
-                        if diag_tile is None or not (diag_tile.terrain.extend_to and neighbor_tile.terrain.connect_diag):
+                        if diag_tile is None or not (diag_tile.terrain.extend_to and neighbor_tile.terrain.connect_diag)\
+                                or not neighbor_tile.terrain.connect_diag or not diag_tile.terrain.connect_diag:
                             mesh.from_object(bpy.data.objects['FLOOR_Cor0'], bpy.context.scene)
                     neighbor_tile = tile.get_tile_in_direction(corner_directions[2])
                     if neighbor_tile is None or neighbor_tile.terrain.make_edges_to:
-                        if diag_tile is None or not (diag_tile.terrain.extend_to and neighbor_tile.terrain.connect_diag):
+                        if diag_tile is None or not (diag_tile.terrain.extend_to and neighbor_tile.terrain.connect_diag)\
+                                or not neighbor_tile.terrain.connect_diag or not diag_tile.terrain.connect_diag:
                             mesh.from_object(bpy.data.objects['FLOOR_Cor2'], bpy.context.scene)
                 except AttributeError:
                     print("unexpected None Type Attribute Error")
@@ -153,20 +155,21 @@ class BmeshFactory:
                     if neighbor_terrains[e] == TerrainType.RAMP:
                         if neighbor_tile.terrain.rampinfo is None:
                             neighbor_tile.terrain.rampinfo = Ramp(neighbor_tiles[e])
-                        if not tile.terrain.rampinfo.connections_made:
-                            tile.terrain.rampinfo.make_connections(tile)
-                        neighbor_terrains[e] = neighbor_tile.terrain.rampinfo.terraintype_for_direction(
-                            ramp_wall_corner_direction)
+                        if not neighbor_tile.terrain.rampinfo.connections_made:
+                            neighbor_tile.terrain.rampinfo.make_connections(neighbor_tile)
+                        newt = neighbor_tile.terrain.rampinfo.terraintype_for_direction(
+                            ramp_wall_corner_direction, corner_directions[e])
+                        neighbor_terrains[e] = newt
                 except AttributeError:
                     neighbor_terrains[e] = wall
                 if neighbor_tiles[e] is not None:
                     if neighbor_tiles[e].terrain.extend_to:
                         add_corner = True
             if TerrainType.RAMP in neighbor_terrains:
-                # TODO: implement
-                pass
+                BmeshFactory.build_ramp_corners(rtn, neighbor_tiles, neighbor_terrains, d.prev())
+                BmeshFactory.build_ramp_corners(rtn, neighbor_tiles, neighbor_terrains, d, True)
             elif neighbor_terrains[0] != wall:
-                rtn.from_object(bpy.data.objects['WALL_Cen1'], bpy.context.scene)
+                rtn.from_object(bpy.data.objects['WALL_Cen0'], bpy.context.scene)
                 if neighbor_terrains[2] != wall:
                     rtn.from_object(bpy.data.objects['WALL_ID'], bpy.context.scene)
                     rtn.from_object(bpy.data.objects['WALL_Cen2'], bpy.context.scene)
@@ -182,7 +185,7 @@ class BmeshFactory:
                         rtn.from_object(bpy.data.objects['FLOOR_ID'], bpy.context.scene)
                         corner_below = False
                 elif neighbor_terrains[1] != wall:
-                    rtn.from_object(bpy.data.objects['WALL_Cor1'], bpy.context.scene)
+                    rtn.from_object(bpy.data.objects['WALL_Cor0'], bpy.context.scene)
                     if neighbor_tiles[0].terrain.make_edges_to:
                         rtn.from_object(bpy.data.objects['FLOOR_Cor0'], bpy.context.scene)
             elif neighbor_terrains[2] != wall:
@@ -244,9 +247,7 @@ class BmeshFactory:
         BmeshFactory.build_ramp_edges(rtn, tile)
         BmeshFactory.build_ramp_walls(rtn, tile)
         tile_below = tile.get_tile_in_direction([], -1)
-        if len(tile.terrain.rampinfo.tops) == 4:
-            BmeshFactory.build_wall(tile, rtn)
-        elif tile_below is not None:
+        if tile_below is not None:
             BmeshFactory.build_ceiling(rtn, tile_below)
         return rtn
 
@@ -354,7 +355,7 @@ class BmeshFactory:
     @staticmethod
     def build_ramp_walls(mesh, tile):
         rinfo = tile.terrain.rampinfo
-        if rinfo.left_dir is not None:
+        if rinfo.connections_made:
             objid = 'RAMP_L'
             BmeshFactory.build_ramp_wall(mesh, objid, rinfo.left_dir, rinfo.left_connection)
             objid = 'RAMP_R'
@@ -367,3 +368,33 @@ class BmeshFactory:
             objid += con.name
             mesh.from_object(bpy.data.objects[objid], bpy.context.scene)
             bmesh.ops.rotate(mesh, verts=mesh.verts[l:len(mesh.verts)], cent=BmeshFactory.center, matrix=BmeshFactory.rot_dict[d])
+
+    # could use another function to add outer diagonals around ramps, but problematic because of further ramps
+    # @staticmethod
+    # def build_ramp_outer_diags(mesh, tile):
+    #     # implement (double all corners, single ramp top corners, full all)
+
+    @staticmethod
+    def build_ramp_corners(mesh, n_tiles, n_terrains, from_d, sec=False):
+        # sec: 'second' flag for center edge and neighbor index
+        cen = False
+        if sec:
+            t_index = 2
+        else:
+            t_index = 0
+        if n_terrains[t_index] == TerrainType.RAMP:
+            rampinfo = n_tiles[t_index].terrain.rampinfo
+            assert rampinfo is not None, "rampinfo was not generated"
+            d2 = from_d.oppos()
+            if not (d2 in rampinfo.tops or rampinfo.left_dir == d2 or rampinfo.right_dir == d2):
+                cen = True
+        elif n_terrains[t_index] != TerrainType.WALL:
+            cen = True
+        if cen:
+            mesh.from_object(bpy.data.objects['WALL_Cen' + str(t_index)], bpy.context.scene)
+            if sec:
+                if n_tiles[t_index] is None or n_tiles[t_index].terrain.make_edges_to:
+                    mesh.from_object(bpy.data.objects['FLOOR_Cen'], bpy.context.scene)
+            mesh.from_object(bpy.data.objects['WALL_Cor' + str(t_index)], bpy.context.scene)
+            if n_tiles[t_index] is None or n_tiles[t_index].terrain.make_edges_to:
+                mesh.from_object(bpy.data.objects['FLOOR_Cor' + str(t_index)], bpy.context.scene)

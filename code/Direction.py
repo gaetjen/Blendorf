@@ -15,6 +15,9 @@ class Direction(IntEnum):
     def prev(self):
         return Direction((self - 1) % 4)
 
+    def oppos(self):
+        return Direction(self.next().next())
+
     def is_neighbor(self, direction):
         if self + 1 == direction or self - 1 == direction:
             return True
